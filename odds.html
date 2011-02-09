@@ -1,17 +1,35 @@
 <html>
   <head>
     <script language="javascript" src="/javascript/jquery-1.4.4.js"></script>
-    <script language="javascript" src="/javascript/generated/diceodds.js"></script>
-    
+    <script language="javascript" src="/javascript/jquery.flot.min.js"></script>
+    <script language="javascript" src="/javascript/generated/probability.js"></script>
+    <script language="javascript" src="/javascript/generated/dice.js"></script>
+    <script language="javascript" src="/javascript/generated/dice_combos.js"></script>
+    <script language="javascript" src="/javascript/generated/dice_roller.js"></script>
+    <link rel="stylesheet" href="stylesheets/main.css" type="text/css" media="screen">
   </head>
   <body>
-    <div id="probability"></div>
+    <div id="probabilty_chart"></div>
+    <form>
+      <div>
+        <label for="die">Dice</label>
+        <select name='die' id='die' class="input">
+          <option value="s4">D4</option>
+          <option value="s6">D6</option>
+          <option value="s8">D8</option>
+          <option value="s10">D10</option>
+          <option value="s12">D12</option>
+        </select>
+      </div>
+      <div>
+        <label for"wildcard">Wildcard?</label>
+        <input type='checkbox' id='wildcard' name='wildcard' class="input">
+      </div>
+    </form>
   </body>
   <script language="javascript">
-    $(document).ready(function() { 
-      var targetProbability = window.computeOddsFor([new window.Die(6), new window.Die(6)]);
-      var s = targetProbability.reduce(function(a, b) { return a + "<tr><td>" + b + "</td></tr>"}, "")
-      $('#probability').html(s) 
+    $(document).ready(function() {
+      window.DiceRoller.initialize()
     })
   </script>
   

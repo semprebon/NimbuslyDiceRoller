@@ -12,7 +12,7 @@ class Die
         
     inRange: (target) -> this.min <= target && target <= this.max
 
-    roll: -> Math.randomInt(this.size + 1) + this.min
+    roll: -> randomInt(this.size) + this.min
 
     probToRoll: (target) -> if this.inRange(target) then this.baseProbability else Probability.NEVER
     
@@ -26,11 +26,11 @@ class Die
 class SimpleDie extends Die
 
     constructor: (size) ->
-        super(1, this.size)
+        super(1, size)
         this.typeId = "d" + this.size
     
 SimpleDie.fromString = (s) -> 
-    return new SimpleDie(Number(id.slice(1))) if /^d\d+$/.test(s)
+    return new SimpleDie(Number(s.slice(1))) if /^d\d+$/.test(s)
     return null
 
 # Fudge Dice - random number from -1 to +1
@@ -49,7 +49,7 @@ class Adjustment extends Die
 
     constructor: (value) ->
         super(value, value)
-        this.typeId = "+" + value
+        this.typeId = if value < 0 then "" + value else "+" + value
 
 Adjustment.fromString = (s) ->
     return new Adjustment(Number(s)) if /^[+\-]?\d+$/.test(s)
@@ -58,10 +58,10 @@ Adjustment.fromString = (s) ->
 # Savage Worlds exploding dice - on rolling max value, roll again and add
 class SavageDie extends Die
 
-    constuctor: (size) ->
+    constructor: (size) ->
+        super(1, size)
         this.size = size
         this.max = Infinity
-        this.value = value || 1
         this.typeId = "s" + size
         
     roll: ->
@@ -73,13 +73,13 @@ class SavageDie extends Die
         total
 
     probToRoll: (target) -> 
-        return this.baseProbability if target < this.sides
-        return Probability.NEVER if target == this.sides
-        this.baseProbability.and(this.probToRoll(target - 6))
+        return this.baseProbability if target < this.size
+        return Probability.NEVER if target == this.size
+        this.baseProbability.and(this.probToRoll(target - this.size))
         
     probToBeat: (target) ->
-        return super(target) if target <= this.sides
-        this.baseProbability.and(this.probToBeat(target - 6))
+        return super(target) if target <= this.size
+        this.baseProbability.and(this.probToBeat(target - this.size))
 
 SavageDie.fromString = (s) -> 
     return new SavageDie(Number(s.slice(1))) if /^s\d+$/.test(s)
