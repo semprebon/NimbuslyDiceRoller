@@ -38,6 +38,7 @@ class DiceSum
             
     probToRoll: (target) -> 
         this.probToRollOn(this.dice, target)
+    
 
 class DicePickHighest
     constructor: (numToPick) ->
@@ -76,8 +77,12 @@ class DicePickHighest
         p2 = this.probToRollUnderOn(dice[0..0], target).and(this.probToRollOn(dice[1..-1], target))
         p1.orExclusive(p2)
 
+    probToBeat: (target) ->
+        Probability.any(die.probToBeat(target) for die in this.dice)
+
     probToRoll: (target) -> 
-        this.probToRollOn(this.dice, target)
+        new Probability(this.probToBeat(target).prob - this.probToBeat(target+1).prob)
+
 
 window.DiceRoller.DiceSum = DiceSum
 window.DiceRoller.DicePickHighest = DicePickHighest
