@@ -10,9 +10,12 @@ handlers:
 - url: /javascript
   static_dir: javascript
 
+- url: /images
+  static_dir: images
+
 - url: /
-  static_files: odds.html
-  upload: odds.html
+  static_files: roller.html
+  upload: roller.html
 
 - url: /test
   static_dir: test

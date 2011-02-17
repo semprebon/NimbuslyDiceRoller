@@ -1,0 +1,5 @@
+#probabilty_chart { width: 400; height:200; }
+
+.die_view { width: 60px; height: 60px; position: relative; float: left;}
+.die_view img { position: absolute; }
+.die_view .roll { position: absolute; font-size: 3em; text-align: center; width: 60px; height: 60px; }

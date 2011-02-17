@@ -1,6 +1,14 @@
 Probability = window.DiceRoller.Probability
 
-class DiceSum
+class DiceCombination
+    
+    roll: -> this.rollDice().result
+
+    rollDice: ->
+        rolls = (die.rollDice() for die in this.dice)
+        { result: null, rolls: rolls, dice: this.dice }
+    
+class DiceSum extends DiceCombination
     constructor: -> 
         this.dice = []
         this.min = 0
@@ -39,8 +47,16 @@ class DiceSum
     probToRoll: (target) -> 
         this.probToRollOn(this.dice, target)
     
+    rollDice: ->
+        result = super()
+        total = 0
+        for roll in result.rolls
+            total = total + roll.result
+        result.result = total
+        result
 
-class DicePickHighest
+
+class DicePickHighest extends DiceCombination
     constructor: (numToPick) ->
         this.numToPick = numToPick
         this.dice = []
@@ -64,25 +80,19 @@ class DicePickHighest
             result = Math.max(result, die.min)
         return result
 
-    probToRollUnderOn: (dice, target) -> this.probToBeatOn(dice, target).not()
-        
-    probToBeatOn: (dice, target) ->
-        return dice[0].probToBeat(target) if dice.length == 1
-        dice[0].probToBeat(target).or(this.probToBeatOn(dice[1..-1], target))
-        
-    probToRollOn: (dice, target) ->
-        console.log("prob to roll " + target + " on " + dice[0].typeId + ' is ' + dice[0].probToRoll(target).prob)
-        return dice[0].probToRoll(target) if dice.length == 1
-        p1 = dice[0].probToRoll(target).and(this.probToRollUnderOn(dice[1..-1], target+1))
-        p2 = this.probToRollUnderOn(dice[0..0], target).and(this.probToRollOn(dice[1..-1], target))
-        p1.orExclusive(p2)
-
     probToBeat: (target) ->
         Probability.any(die.probToBeat(target) for die in this.dice)
 
     probToRoll: (target) -> 
         new Probability(this.probToBeat(target).prob - this.probToBeat(target+1).prob)
-
+        
+    rollDice: ->
+        result = super()
+        total = null
+        for roll in result.rolls
+            total = Math.max(total, roll.result)
+        result.result = total
+        result
 
 window.DiceRoller.DiceSum = DiceSum
 window.DiceRoller.DicePickHighest = DicePickHighest

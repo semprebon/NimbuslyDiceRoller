@@ -13,6 +13,10 @@ class Die
     inRange: (target) -> this.min <= target && target <= this.max
 
     roll: -> randomInt(this.size) + this.min
+    
+    rollDice: ->
+        result = this.roll()
+        { result: result, rolls : [result], dice : [this] }
 
     probToRoll: (target) -> if this.inRange(target) then this.baseProbability else Probability.NEVER
     
@@ -71,7 +75,7 @@ class SavageDie extends Die
             roll = super()
             total += roll
         total
-
+        
     probToRoll: (target) -> 
         return this.baseProbability if target < this.size
         return Probability.NEVER if target == this.size
