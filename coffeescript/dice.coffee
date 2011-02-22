@@ -4,6 +4,7 @@ Probability = window.DiceRoller.Probability
 # Generate a random integer between 0 and max-1
 randomInt = (limit) -> Math.floor(Math.random() * limit)
 
+class DiceFactory
 # Base class for die classes. This sets up a basic flat-distribution dice
 class Die
     constructor: (@min, @max) ->
@@ -24,7 +25,10 @@ class Die
         return Probability.ALWAYS if target <= this.min
         return Probability.NEVER if target > this.max
         return new Probability((this.size - (target - this.min)) / this.size)
+
+    probToRollOver: (target) -> this.probToBeat(target+1)
         
+    probToRollUnder: (target) -> this.probToBeat(target).not()
 
 # A simple die - randomly generates a number between 1 and size
 class SimpleDie extends Die
@@ -90,8 +94,16 @@ SavageDie.fromString = (s) ->
     return null
 
 window.DiceRoller.Die = Die
+
 window.DiceRoller.SimpleDie = SimpleDie
+window.DiceRoller.diceFactory.register(SimpleDie)
+
 window.DiceRoller.FudgeDie = FudgeDie
+window.DiceRoller.diceFactory.register(FudgeDie)
+
 window.DiceRoller.SavageDie = SavageDie
+window.DiceRoller.diceFactory.register(SavageDie)
+
 window.DiceRoller.Adjustment = Adjustment
+window.DiceRoller.diceFactory.register(Adjustment)
 

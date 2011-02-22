@@ -2,7 +2,7 @@ class Probability
     constructor: (@prob) ->
         
     or: (q) -> this.not().and(q.not()).not()
-    orExclusive: (q) -> new Probability(this.prob + q.prob)
+    xor: (q) -> new Probability(this.prob + q.prob)
     and: (q) ->  new Probability(this.prob * q.prob)
     not: -> new Probability(1.0 - this.prob)
     times: (n) -> new Probability(Math.pow(this.prob, n))
@@ -18,7 +18,7 @@ Probability.any = (probs) -> this.all(prob.not() for prob in probs).not()
 Probability.anyExclusive = (probs) -> 
     p = new Probability(0.0)
     for prob in probs
-        p = p.orExclusive(prob)
+        p = p.xor(prob)
     p
 
 Probability.NEVER = new Probability(0.0)

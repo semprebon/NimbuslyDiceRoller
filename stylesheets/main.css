@@ -1,5 +1,17 @@
+#odds { float: right;}
 #probabilty_chart { width: 400; height:200; }
 
 .die_view { width: 60px; height: 60px; position: relative; float: left;}
 .die_view img { position: absolute; }
 .die_view .roll { position: absolute; font-size: 3em; text-align: center; width: 60px; height: 60px; }
+
+/* Roll pane */
+#roll { width: 60%; height: 80%; position: relative;}
+#roll .set_name { width: 100%; background-color: #000; color: #fff; font-weight: bold;}
+#roll .roll_area { width: 100%; height: 60%; }
+#roll .quick_picks { width: 100%; height: 30%; background-color: #555; font-color: #fff; }
+#roll .roll_result { 
+    position: absolute; top: 30%; left: 30%; 
+    font-size: 300%;
+    background-color: #ff0; 
+}

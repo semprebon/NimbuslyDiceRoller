@@ -13,22 +13,24 @@ class DiceView
             dieResult = result.rolls[i]
             dieResult = dieResult.result if dieResult.hasOwnProperty('result')
             this.diceViews.push(new DieView(parent, result.dice[i], dieResult))
-    
+
 class DiceRoller
-    constructor: (el_selector) ->
-        this.element = jQuery(el_selector)
-        this.dieSelector =  jQuery(jQuery(el_selector + ' .die')[0])
-        this.wildCheckbox = jQuery(jQuery(el_selector + ' .wildcard')[0])
-        this.rollResult = jQuery('#roll_result')
-        this.dieSelector.change (event) => this.rollDice()
-        this.wildCheckbox.change (event) => this.rollDice()
+    constructor: (pane_selector) ->
+        this.element = jQuery(pane_selector)
+        jQuery(".dice_set_pick").click (event) =>
+            newSpec = jQuery(event.target).attr('spec')
+            this.setDiceTo(newSpec) if newSpec 
+            this.rollDice()
+        this.rollArea = jQuery('.roll_area')
+
+    setDiceTo: (spec) ->
+        this.dice = window.DiceRoller.diceFactory.create(spec)
+        
         
     rollDice: ->
-        die = window.DiceRoller.SavageDie.fromString(this.dieSelector.val())
-        if this.wildCheckbox[0].checked
-            die = new window.DiceRoller.DicePickHighest(1, die, new window.DiceRoller.SavageDie(6))
-        rollResult = die.rollDice()
-        this.rollResult.empty()
-        new DiceView(this.rollResult, rollResult)
+        rollResult = this.dice.rollDice()
+        this.rollArea.empty()
+        new DiceView(this.rollArea, rollResult)
+        jQuery(".roll_result").text(rollResult.result)
     
 window.DiceRoller.DiceRoller = DiceRoller

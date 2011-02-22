@@ -9,12 +9,11 @@ class DiceCombination
         { result: null, rolls: rolls, dice: this.dice }
     
 class DiceSum extends DiceCombination
-    constructor: -> 
-        this.dice = []
+    constructor: (dice) -> 
+        this.dice = dice
         this.min = 0
         this.max = 0
-        for die in arguments
-            this.dice.push(die)
+        for die in dice
             this.min = this.min + die.min
             this.max = this.max + die.max
     
@@ -44,8 +43,25 @@ class DiceSum extends DiceCombination
         Probability.anyExclusive(
             die.probToRoll(roll).and(this.probToRollOn(dice[1..-1], target - roll)) for roll in [min..max])
             
-    probToRoll: (target) -> 
-        this.probToRollOn(this.dice, target)
+    probToRollOverWith: (dice, target) ->
+        return dice[0].probToRollOver(target) if dice.length == 1
+        first = dice[0]
+        rest = dice[1..-1]
+
+        min = Math.max(first.min, target - this.maxRollOn(rest))
+        max = Math.min(first.max, target - this.minRollOn(rest))
+
+        return Probability.NEVER unless first.inRange(min)
+        return Probability.ALWAYS unless first.inRange(max)
+        
+        Probability.anyExclusive(first.probToRoll(roll).and(this.probToRollOverWith(rest, target - roll)) for roll in [min..max]).xor(
+            first.probToRollOver(max))
+
+    probToRoll: (target) -> this.probToRollOn(this.dice, target)
+    
+    probToRollOver: (target) -> this.probToRollOverWith(this.dice, target)
+
+    probToBeat: (target) -> this.probToRollOverWith(this.dice, target-1)
     
     rollDice: ->
         result = super()
@@ -55,13 +71,11 @@ class DiceSum extends DiceCombination
         result.result = total
         result
 
-
+# Dice representing dice pools where we pick the highest n dice from a pool
 class DicePickHighest extends DiceCombination
-    constructor: (numToPick) ->
+    constructor: (numToPick, dice) ->
         this.numToPick = numToPick
-        this.dice = []
-        for die in arguments
-            this.dice.push(die) unless die == numToPick
+        this.dice = dice
         this.min = this.minRollOn(this.dice)
         this.max = this.maxRollOn(this.dice)        
 
@@ -80,11 +94,30 @@ class DicePickHighest extends DiceCombination
             result = Math.max(result, die.min)
         return result
 
+    # Compute the probabilty that the n highest dice of dice will have the target value
+    probToRollNHighestOn: (n, target, dice) ->
+        return Probability.NEVER if n > dice.length
+        first = dice[0]
+        if dice.length == 1
+            result = if (n == 1) then first.probToRoll(target) else first.probToRollUnder(target+1)
+        else
+            rest = dice[1..-1]
+            result = Probability.anyExclusive([
+                    first.probToRollUnder(target).and(this.probToRollNHighestOn(n, target, rest)),
+                    first.probToRoll(target).and(this.probToRollNHighestOn(n-1, target, rest))
+                ])
+            console.log("(" + first.probToRollUnder(target).prob + 
+                " && " + this.probToRollNHighestOn(n, target, rest).prob +
+                ") xor (" + first.probToRoll(target).prob + 
+                "  && " + this.probToRollNHighestOn(n-1, target, rest).prob + ")")
+        console.log("p for " + n + " on " + dice.length + " = " + result.prob)
+        return result
+
     probToBeat: (target) ->
         Probability.any(die.probToBeat(target) for die in this.dice)
 
     probToRoll: (target) -> 
-        new Probability(this.probToBeat(target).prob - this.probToBeat(target+1).prob)
+        this.probToRollNHighestOn(this.numToPick, target, this.dice)
         
     rollDice: ->
         result = super()

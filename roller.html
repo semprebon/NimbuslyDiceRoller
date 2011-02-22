@@ -5,6 +5,7 @@
     <script language="javascript" src="/javascript/jquery.flot.stack.js"></script>
     <script language="javascript" src="/javascript/template.js"></script>
     <script language="javascript" src="/javascript/generated/probability.js"></script>
+    <script type="text/javascript" src="../javascript/generated/dice_factory.js"></script>
     <script language="javascript" src="/javascript/generated/dice.js"></script>
     <script language="javascript" src="/javascript/generated/dice_combos.js"></script>
     <script language="javascript" src="/javascript/generated/dice_roller.js"></script>
@@ -14,42 +15,15 @@
   <body>
     <div id='odds'>
       <div id="probabilty_chart"></div>
-      <form>
-        <div>
-          <label for="die">Dice</label>
-          <select name='die' id='die' class="die">
-            <option value="s4">D4</option>
-            <option value="s6">D6</option>
-            <option value="s8">D8</option>
-            <option value="s10">D10</option>
-            <option value="s12">D12</option>
-          </select>
-        </div>
-        <div>
-          <label for"wildcard">Wildcard?</label>
-          <input type='checkbox' class='wildcard' name='wildcard' class="wildcard">
-        </div>
-      </form>
     </div>
-    <div id='roll'>
-      <div id="roll_result"></div>
-      <form>
-        <div>
-          <label for="die">Dice</label>
-          <select name='die' id='die' class="die">
-            <option value="s4">D4</option>
-            <option value="s6">D6</option>
-            <option value="s8">D8</option>
-            <option value="s10">D10</option>
-            <option value="s12">D12</option>
-          </select>
-        </div>
-        <div>
-          <label for"wildcard">Wildcard?</label>
-          <input type='checkbox' class='wildcard' name='wildcard' class="wildcard">
-        </div>
-      </form>
-    <div>
+    <div id='roll' class='pane'>
+      <div class="set_name">Test</div>
+      <div class="roll_area"></div>
+      <div class="roll_result"></div>
+      <div class="quick_picks">
+        <button class="dice_set_pick" spec="s6+s4">Attack</button>
+      </div>
+    </div>
       <script type="text/html" id="die_view_template">
         <div id="<%=id%>" class="die_view">
           <img class="die_view" src="/images/<%=typeId%>_60.png">
