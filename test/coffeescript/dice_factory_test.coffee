@@ -29,3 +29,11 @@ test "The dice factory can create a sum of dice", 4, ->
     equals(dice.dice[0].typeId, "s12", "first dice should be s12")
     equals(dice.dice[1].typeId, "+2", "second dice should be +2")
     
+test "The dice factory can create max of dice", 5, ->
+    dice = diceFactory.create("max(d6,d8)")
+    ok(dice instanceof window.DiceRoller.DicePickHighest, "should be a pick highest")
+    equals(dice.numToPick, 1, "should be pick 1")
+    equals(dice.dice.length, 2, "should have 2 dice")
+    equals(dice.dice[0].typeId, "d6", "first dice should be d6")
+    equals(dice.dice[1].typeId, "d8", "second dice should be d8")
+    

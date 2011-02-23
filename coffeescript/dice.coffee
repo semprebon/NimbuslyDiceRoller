@@ -4,7 +4,6 @@ Probability = window.DiceRoller.Probability
 # Generate a random integer between 0 and max-1
 randomInt = (limit) -> Math.floor(Math.random() * limit)
 
-class DiceFactory
 # Base class for die classes. This sets up a basic flat-distribution dice
 class Die
     constructor: (@min, @max) ->

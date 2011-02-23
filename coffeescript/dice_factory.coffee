@@ -23,10 +23,17 @@ class DiceFactory
         dice = (this.createDie(spec) for i in [1..number])
         
     create: (spec) ->
-        specs = spec.replace(/-/, "+-").split('+')
-        dice = []
-        for spec in specs
-            dice.push(this.createDie(spec)) unless spec == ""
-        return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)            
+        if /max\((.*)\)/.test(spec)
+            specs = spec[4..-2].split(',')
+            dice = []
+            for spec in specs
+                dice.push(this.createDie(spec)) unless spec == ""
+            return new window.DiceRoller.DicePickHighest(1, dice)            
+        else
+            specs = spec.replace(/-/, "+-").split('+')
+            dice = []
+            for spec in specs
+                dice.push(this.createDie(spec)) unless spec == ""
+            return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)            
 
 window.DiceRoller.diceFactory = new DiceFactory()

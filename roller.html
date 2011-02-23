@@ -5,7 +5,7 @@
     <script language="javascript" src="/javascript/jquery.flot.stack.js"></script>
     <script language="javascript" src="/javascript/template.js"></script>
     <script language="javascript" src="/javascript/generated/probability.js"></script>
-    <script type="text/javascript" src="../javascript/generated/dice_factory.js"></script>
+    <script type="text/javascript" src="/javascript/generated/dice_factory.js"></script>
     <script language="javascript" src="/javascript/generated/dice.js"></script>
     <script language="javascript" src="/javascript/generated/dice_combos.js"></script>
     <script language="javascript" src="/javascript/generated/dice_roller.js"></script>
@@ -21,21 +21,29 @@
       <div class="roll_area"></div>
       <div class="roll_result"></div>
       <div class="quick_picks">
-        <button class="dice_set_pick" spec="s6+s4">Attack</button>
       </div>
     </div>
-      <script type="text/html" id="die_view_template">
-        <div id="<%=id%>" class="die_view">
-          <img class="die_view" src="/images/<%=typeId%>_60.png">
-          <div class="roll"><%= roll %></div>
-        </div>
-      </script>
+    <div id="diceSelection" style="display: none">
+    </div>
+    <script type="text/html" id="dice_set_view_template">
+      <button class="dice_set_pick" spec="<%= spec %>"><%= name %></button>
+    </script>
+    <script type="text/html" id="die_view_template">
+      <div id="<%=id%>" class="die_view">
+        <img class="die_view" src="/images/<%=typeId%>_60.png">
+        <div class="roll"><%= roll %></div>
+      </div>
+    </script>
+    <script type="text/html" id="die_view_select_template">
+      <div id="die_view_select<%= typeId %>" class="die_view_select" spec="<%= typeId %>">
+        <img class="die_view" src="/images/<%= typeId %>_60.png">
+      </div>
+    </script>
   </body>
   <script language="javascript">
     $(document).ready(function() {
-      d = new window.DiceRoller.DiceCalculator('#odds')
-      console.log("creating roller")
-      d2 = new window.DiceRoller.DiceRoller('#roll')
+      new window.DiceRoller.DiceRoller('#roll')
+      new window.DiceRoller.DiceCalculator('#odds')
     })
   </script>
   

@@ -1,4 +1,4 @@
-#odds { float: right;}
+#odds { float: right; }
 #probabilty_chart { width: 400; height:200; }
 
 .die_view { width: 60px; height: 60px; position: relative; float: left;}
