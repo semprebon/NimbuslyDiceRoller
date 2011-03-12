@@ -13,6 +13,7 @@ nearlyEqual = (actual, expected, message) ->
         
 DiceRoller = window.DiceRoller
 
+# Test summing combination
 diceAdded = new DiceRoller.DiceSum([new DiceRoller.SavageDie(6), new DiceRoller.SimpleDie(4)])
 test "s6+d4 should range from 2 to infinity", 2, ->
     equal(diceAdded.max, Infinity)
@@ -26,12 +27,22 @@ test "s6+d4 should compute probababilty to roll over", 2, ->
 test "s6+d4 should not roll less than 2", 10, ->
     for i in [1..10]
         ok(diceAdded.roll() >= 2, 'roll greater than 2')
-test "s6+d4 should result in 2 dice rolled", 3, ->
-    result = diceAdded.rollDice()
-    equal(result.rolls.length, 2, 'should roll 2 dice')
-    equal(result.result, result.rolls[0].result + result.rolls[1].result, 'should have total be sum of individual rolls')
-    equal(result.dice[0].typeId, "s6", 'should record dice rolled')
+
+test "s6+d4 should save roll", 1, ->
+    roll = diceAdded.roll()
+    equal(roll, diceAdded.currentRoll, 'should record roll')
+
+test "adding a die should result in new combination", 2, ->
+    dice = diceAdded.add(new DiceRoller.SimpleDie(10))
+    equal(dice.dice.length, 3, "should now have 3 dice")
+    equal(dice.dice[2].typeId, "d10", "3rd dice should be d10")
+
+test "removing a die should result in new combination", 2, ->
+    dice = diceAdded.remove(diceAdded.dice[1])
+    equal(dice.dice.length, 1, "should now have 1 die")
+    equal(dice.dice[0].typeId, "s6", "first dice should be s6")
     
+# Test highest combination
 diceHighest = new DiceRoller.DicePickHighest(1, [new DiceRoller.SimpleDie(6), new DiceRoller.SimpleDie(4)])
 test "max(d6,d4) should range from 1 to 6", 2, ->
     equal(diceHighest.max, 6)
@@ -43,11 +54,6 @@ test "max(d6,d4) should roll between 1 and 6", 10, ->
     for i in [1..10]
         r = diceHighest.roll()
         ok((1 <= r) && (r <= 6), 'roll between 1 and 6')
-test "max(d6,d4) should result in 2 dice rolled", 3, ->
-    result = diceHighest.rollDice()
-    equal(result.rolls.length, 2, 'should roll 2 dice')
-    equal(result.result, Math.max(result.rolls[0].result, result.rolls[1].result), 'result should be highest roll')
-    equal(result.dice[0].typeId, "d6", 'should record dice rolled')
 
 diceHighest2 = new DiceRoller.DicePickHighest(2, [
         new DiceRoller.SimpleDie(6), 

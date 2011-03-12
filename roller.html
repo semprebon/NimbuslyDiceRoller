@@ -1,50 +1,54 @@
 <html>
   <head>
-    <script language="javascript" src="/javascript/jquery-1.4.4.js"></script>
-    <script language="javascript" src="/javascript/jquery.flot.js"></script>
-    <script language="javascript" src="/javascript/jquery.flot.stack.js"></script>
-    <script language="javascript" src="/javascript/template.js"></script>
-    <script language="javascript" src="/javascript/generated/probability.js"></script>
+    <script type="text/javascript" src="/javascript/jquery-1.4.4.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.flot.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.flot.stack.js"></script>
+    <script type="text/javascript" src="/javascript/template.js"></script>
+    <script type="text/javascript" src="/javascript/generated/probability.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_factory.js"></script>
-    <script language="javascript" src="/javascript/generated/dice.js"></script>
-    <script language="javascript" src="/javascript/generated/dice_combos.js"></script>
-    <script language="javascript" src="/javascript/generated/dice_roller.js"></script>
-    <script language="javascript" src="/javascript/generated/dice_calculator.js"></script>
-    <link rel="stylesheet" href="stylesheets/main.css" type="text/css" media="screen">
+    <script type="text/javascript" src="/javascript/generated/dice.js"></script>
+    <script type="text/javascript" src="/javascript/generated/dice_combos.js"></script>
+    <script type="text/javascript" src="/javascript/generated/dice_view.js"></script>
+    <script type="text/javascript" src="/javascript/generated/dice_roller.js"></script>
+    <script type="text/javascript" src="/javascript/generated/dice_calculator.js"></script>
+    <link rel="stylesheet" href="stylesheets/main.css" type="text/css">
+    <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="only screen and (min-device-width: 481px)" />
+    <link rel="stylesheet" href="stylesheets/handheld.css" type="text/css" media="only screen and (max-device-width: 480px)" />
   </head>
   <body>
     <div id='odds'>
-      <div id="probabilty_chart"></div>
+      <div id="probabiltyChart"></div>
     </div>
     <div id='roll' class='pane'>
-      <div class="set_name">Test</div>
-      <div class="roll_area"></div>
-      <div class="roll_result"></div>
-      <div class="quick_picks">
+      <button class="title">Test</button>
+      <div class="rollArea">
+        <div class="dice"></div>
       </div>
+      <div class="rollResult"></div>
     </div>
-    <div id="diceSelection" style="display: none">
-    </div>
-    <script type="text/html" id="dice_set_view_template">
-      <button class="dice_set_pick" spec="<%= spec %>"><%= name %></button>
-    </script>
-    <script type="text/html" id="die_view_template">
-      <div id="<%=id%>" class="die_view">
-        <img class="die_view" src="/images/<%=typeId%>_60.png">
-        <div class="roll"><%= roll %></div>
-      </div>
-    </script>
-    <script type="text/html" id="die_view_select_template">
-      <div id="die_view_select<%= typeId %>" class="die_view_select" spec="<%= typeId %>">
-        <img class="die_view" src="/images/<%= typeId %>_60.png">
-      </div>
-    </script>
+    <div id="savedDice"></div>
+    <div id="dieSelector"></div>
   </body>
-  <script language="javascript">
-    $(document).ready(function() {
-      new window.DiceRoller.DiceRoller('#roll')
-      new window.DiceRoller.DiceCalculator('#odds')
-    })
+  <!-- Templates -->
+
+  <!-- dice_set_view_template is used to display selectable dice sets -->
+  <script type="text/html" id="diceSetViewTemplate">
+    <button class="diceSetPick" spec="<%= spec %>"><%= name %></button>
   </script>
-  
+
+  <!-- dice_view_template is used to display a single die in the main roll area -->
+  <script type="text/html" id="dieViewTemplate">
+    <div id="<%=id%>" class="dieView" spec="<%= die.typeId %>">
+      <img class="dieView" src="/images/<%=die.typeId%>_60.png">
+      <div class="roll"><%=die.currentRoll%></div>
+    </div>
+  </script>
+
+<script language="javascript">
+  $(document).ready(function() {
+    new window.DiceRoller.DiceRoller('#roll')
+    new window.DiceRoller.DiceCalculator('#odds')
+  })
+</script>
+
 </html>

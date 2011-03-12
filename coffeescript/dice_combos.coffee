@@ -1,16 +1,24 @@
 Probability = window.DiceRoller.Probability
 
 class DiceCombination
+    constructor: (dice) ->
+        this.dice = dice
     
-    roll: -> this.rollDice().result
+    roll: -> 
+        die.roll() for die in this.dice
+        this.currentRoll = this.computeResult()
+    
+    add: (die) -> new this.constructor(this.dice.concat([die]))
 
-    rollDice: ->
-        rolls = (die.rollDice() for die in this.dice)
-        { result: null, rolls: rolls, dice: this.dice }
-    
+    remove: (dieToRemove) -> 
+        newDice = []
+        for die in this.dice
+            newDice.push(die) unless die == dieToRemove
+        new this.constructor(newDice)
+        
 class DiceSum extends DiceCombination
     constructor: (dice) -> 
-        this.dice = dice
+        super(dice)
         this.min = 0
         this.max = 0
         for die in dice
@@ -63,19 +71,17 @@ class DiceSum extends DiceCombination
 
     probToBeat: (target) -> this.probToRollOverWith(this.dice, target-1)
     
-    rollDice: ->
-        result = super()
+    computeResult: ->
         total = 0
-        for roll in result.rolls
-            total = total + roll.result
-        result.result = total
-        result
+        for die in this.dice
+            total = total + die.currentRoll
+        total
 
 # Dice representing dice pools where we pick the highest n dice from a pool
 class DicePickHighest extends DiceCombination
     constructor: (numToPick, dice) ->
         this.numToPick = numToPick
-        this.dice = dice
+        super(dice)
         this.min = this.minRollOn(this.dice)
         this.max = this.maxRollOn(this.dice)        
 
@@ -119,14 +125,13 @@ class DicePickHighest extends DiceCombination
     probToRoll: (target) -> 
         this.probToRollNHighestOn(this.numToPick, target, this.dice)
         
-    rollDice: ->
-        result = super()
+    computeResult: ->
         total = null
-        for roll in result.rolls
-            total = Math.max(total, roll.result)
-        result.result = total
-        result
+        for die in this.dice
+            total = if total then Math.max(total, die.currentRoll) else die.currentRoll
+        total
 
+window.DiceRoller.DiceCombination = DiceCombination
 window.DiceRoller.DiceSum = DiceSum
 window.DiceRoller.DicePickHighest = DicePickHighest
 

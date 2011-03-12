@@ -9,15 +9,14 @@ class Die
     constructor: (@min, @max) ->
         this.size = (this.max - this.min) + 1
         this.baseProbability = new Probability(1.0 / this.size)
+        this.roll()
         
     inRange: (target) -> this.min <= target && target <= this.max
 
-    roll: -> randomInt(this.size) + this.min
+    newRollValue: -> randomInt(this.size) + this.min
     
-    rollDice: ->
-        result = this.roll()
-        { result: result, rolls : [result], dice : [this] }
-
+    roll: -> this.currentRoll = this.newRollValue()
+    
     probToRoll: (target) -> if this.inRange(target) then this.baseProbability else Probability.NEVER
     
     probToBeat: (target) -> 
@@ -28,7 +27,7 @@ class Die
     probToRollOver: (target) -> this.probToBeat(target+1)
         
     probToRollUnder: (target) -> this.probToBeat(target).not()
-
+    
 # A simple die - randomly generates a number between 1 and size
 class SimpleDie extends Die
 
@@ -71,7 +70,7 @@ class SavageDie extends Die
         this.max = Infinity
         this.typeId = "s" + size
         
-    roll: ->
+    newRollValue: ->
         roll = super()
         total = roll
         while (roll == this.size)

@@ -3,13 +3,15 @@ module "Dice Tests"
 
 nearlyEqual = (actual, expected, message) ->
     ok(Math.abs(actual - expected) < 0.00001, message)
-    
-test "A d6 has correct attributes", 4, ->
+
+# Test simple die    
+test "A d6 has correct attributes", 5, ->
     d6 = new window.DiceRoller.SimpleDie(6)
     equals(d6.typeId, "d6", "six sided die should be d6")
     equals(d6.min, 1, "six sided die should have minimum of 1")
     equals(d6.max, 6, "six sided die should have maximum of 6")
     equals(d6.size, 6, "six sided dice should have 6 sides")
+    ok(d6.inRange(d6.currentRoll), "six sided dice should have a current roll in range")
 
 test "A d6 has correct probabilities", 6, ->
     d6 = new window.DiceRoller.SimpleDie(6)
@@ -33,7 +35,11 @@ test "A d6 rolls correctly", 10, ->
         roll = d6.roll()
         ok(1 <= roll && roll <= 6, roll + "is between 1 and 6")
 
-    
+test "after rolling, current roll records last rolled value", 1, ->
+    d6 = new window.DiceRoller.SimpleDie(6)
+    roll = d6.roll()
+    equal(roll, d6.currentRoll)    
+
 test "A d8 has correct attributes", 1, ->    
     d8 = new window.DiceRoller.SimpleDie(8)
     equals(d8.typeId, "d8", "eight sided die should be d8")
@@ -57,6 +63,7 @@ test "A SimpleDie fatory should not create dice from non-simple type ids", 6, ->
         equals(window.DiceRoller.SimpleDie.fromString("s4"), undefined)
 
 
+# Test fudge die    
 test "A Fudge die has a distribution between -1 and +1", 10, ->
     df = new window.DiceRoller.FudgeDie()
     for i in [1..10]
@@ -86,6 +93,8 @@ test 'The FudgeDie factory should not create fudge dice from non-fudge type ids'
      equals(window.DiceRoller.FudgeDie.fromString("-4"), undefined)
      equals(window.DiceRoller.FudgeDie.fromString("d4"), undefined)
      equals(window.DiceRoller.FudgeDie.fromString("1dF"), undefined)
+
+# Test adjustment
      
 test 'A +6 adjustment should have a distribution between 6 and 6', 10, ->
     adjustment = new window.DiceRoller.Adjustment(6)
@@ -114,6 +123,8 @@ test 'The Adjustment factory should not create adjustments from non-adjustment t
      equals(window.DiceRoller.Adjustment.fromString("s4"), undefined)
      equals(window.DiceRoller.Adjustment.fromString("dF"), undefined)
      equals(window.DiceRoller.Adjustment.fromString("d4"), undefined)
+
+# Test savage die
 
 test "A savage d6 has a distribution between 1 and n", 10, ->
     die = new window.DiceRoller.Adjustment(6)

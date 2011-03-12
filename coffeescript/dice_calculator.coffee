@@ -1,7 +1,7 @@
 class DiceCalculator
     constructor: (pane_selector) ->
         this.element = jQuery(pane_selector)
-        this.oddsChart = jQuery('#probabilty_chart')[0]
+        this.oddsChart = jQuery('#probabiltyChart')[0]
         jQuery(".dice_set_pick").click (event) =>
             newSpec = jQuery(event.target).attr('spec')
             this.showOdds(newSpec)
