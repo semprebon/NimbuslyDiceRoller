@@ -17,12 +17,13 @@
   </head>
   <body>
     <div id='odds'>
-      <div id="probabiltyChart"></div>
+      <div id="probabilityChart">&nbsp;</div>
     </div>
     <div id='roll' class='pane'>
       <button class="title">Test</button>
       <div class="rollArea">
         <div class="dice"></div>
+        <div style="clear: both;"></div>
       </div>
       <div class="rollResult"></div>
     </div>
@@ -39,15 +40,16 @@
   <!-- dice_view_template is used to display a single die in the main roll area -->
   <script type="text/html" id="dieViewTemplate">
     <div id="<%=id%>" class="dieView" spec="<%= die.typeId %>">
-      <img class="dieView" src="/images/<%=die.typeId%>_60.png">
+      <img src="/images/<%=die.typeId%>_60.png">
       <div class="roll"><%=die.currentRoll%></div>
     </div>
   </script>
 
 <script language="javascript">
   $(document).ready(function() {
-    new window.DiceRoller.DiceRoller('#roll')
-    new window.DiceRoller.DiceCalculator('#odds')
+    roller = new window.DiceRoller.DiceRoller('#roll')
+    odds = new window.DiceRoller.DiceCalculator('#odds')
+    roller.addObserver(odds)
   })
 </script>
 

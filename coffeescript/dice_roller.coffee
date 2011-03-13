@@ -20,11 +20,11 @@ class DiceRoller
     
     refreshView: ->
         for observer in this.observers
-            observer.update()
-        this.rollArea.empty()
-        new DiceView(this.rollArea, this.dice)
+            observer.update(this.dice)
+        jQuery('#roll .dice').empty()
+        new DiceView(jQuery('#roll .dice'), this.dice)
         jQuery(".rollResult").text(this.currentRoll)
-        jQuery("#roll .dice").click (event) => 
+        jQuery("#roll .dieView").click (event) => 
             die = event.currentTarget.controller.die
             this.removeDie(die)
         
