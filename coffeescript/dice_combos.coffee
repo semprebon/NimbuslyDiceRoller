@@ -16,6 +16,11 @@ class DiceCombination
             newDice.push(die) unless die == dieToRemove
         new this.constructor(newDice)
         
+    toAttributes: ->
+        spec = (die.typeId for die in this.dice).join('+')
+        rolls = (die.roll for die in this.dice)
+        { spec: spec, rolls: rolls }
+        
 class DiceSum extends DiceCombination
     constructor: (dice) -> 
         super(dice)

@@ -3,37 +3,39 @@
 #savedDice { background-color: #011; color: #fff;  }
 #dieSelector { background-color: #110; color: #fff;  }
 
-#probabilityChart { width: 100%; height: 100%; background-color: #456;}
-
-.title { 
-    width: 100%; text-align: center; background-color: #BBB; color: #000; 
-    font-size: 200%;
-}
-
-@media (max-width: 200 px) {
-    .dieView { width: 60px; height: 60px; }
-}
-@media only screen and (min-width: 201 px) {
-.dieView { width: 60px; height: 60px }
-}
+/* roll pane */
 #roll .dice {
     position: absolute; left: 50%; height: 50%;
     margin-width: -50%;
     margin-height: -50%;
 }
+#roll .dice .dieView { float: left; overflow: hidden; }
 
-.dieView { width: 60px; height: 60px; position: relative; float: left;}
-.dieView img { position: absolute; }
-.dieView .roll { position: absolute; font-size: 3em; text-align: center; width: 60px; height: 60px; }
-
-/* Roll pane */
 #roll { width: 60%; height: 80%; position: relative;}
 #roll .setName { width: 100%; background-color: #000; color: #fff; font-weight: bold;}
 #roll .rollArea { width: 100%; height: 60%; }
-#roll .quickPicks { width: 100%; height: 30%; background-color: #555; font-color: #fff; }
 #roll .rollResult { 
     position: absolute; top: 30%; left: 30%; 
     font-size: 300%;
     background-color: #ff0; 
 }
 
+/* odds pane */
+#probabilityChart { width: 100%; height: 100%; background-color: #456;}
+
+/* die selector pane */
+#dieSelector .dieView { float: left; }
+
+/* saved dice pane */
+#savedDice .dice { float: left; }
+#savedDice .dice .dieView { float: left; }
+
+/* Pieces */
+.title { 
+    width: 100%; text-align: center; background-color: #BBB; color: #000; 
+    font-size: 200%;
+}
+
+.dieView { position: relative; overflow: hidden; }
+.dieView img { position: absolute; width: 100%; height: 100%; }
+.dieView .roll { position: absolute; font-size: 3em; color: black; text-align: center; width: 100%; height: 100%; }

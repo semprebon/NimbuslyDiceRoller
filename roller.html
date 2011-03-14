@@ -8,12 +8,21 @@
     <script type="text/javascript" src="/javascript/generated/dice_factory.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_combos.js"></script>
+    <script type="text/javascript" src="/javascript/generated/storage.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_view.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_roller.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_calculator.js"></script>
     <link rel="stylesheet" href="stylesheets/main.css" type="text/css">
-    <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="only screen and (min-device-width: 481px)" />
-    <link rel="stylesheet" href="stylesheets/handheld.css" type="text/css" media="only screen and (max-device-width: 480px)" />
+    <link rel="stylesheet" href="stylesheets/large_landscape.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/small_portrait.css" type="text/css" 
+      media="only screen and (max-width: 5in) and (orientation: portrait)" />
+    <link rel="stylesheet" href="stylesheets/small_landscape.css" type="text/css" 
+      media="only screen and (max-width: 5in) and (orientation: landscape)" />
+    <link rel="stylesheet" href="stylesheets/large_portrait.css" type="text/css" 
+      media="only screen and (min-width: 5.001in) and (orientation: portrait)" />
+    <link rel="stylesheet" href="stylesheets/hdpi.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/xhdpi.css" type="text/css" 
+      media="only screen and (min-resolution: 320dpi)" />
   </head>
   <body>
     <div id='odds'>
@@ -23,7 +32,9 @@
       <button class="title">Test</button>
       <div class="rollArea">
         <div class="dice"></div>
-        <div style="clear: both;"></div>
+        <div class="buttons" style="clear: both;">
+          <button class="save" >save</button>
+        </div>
       </div>
       <div class="rollResult"></div>
     </div>
@@ -34,7 +45,7 @@
 
   <!-- dice_set_view_template is used to display selectable dice sets -->
   <script type="text/html" id="diceSetViewTemplate">
-    <button class="diceSetPick" spec="<%= spec %>"><%= name %></button>
+    <button class="diceSetPick" spec="<%= toAttributes().spec %>"><%= toAttributes().spec %></button>
   </script>
 
   <!-- dice_view_template is used to display a single die in the main roll area -->

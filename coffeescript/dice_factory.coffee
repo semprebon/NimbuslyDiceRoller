@@ -22,7 +22,7 @@ class DiceFactory
         
         dice = (this.createDie(spec) for i in [1..number])
         
-    create: (spec) ->
+    create: (spec, roll) ->
         if /max\((.*)\)/.test(spec)
             specs = spec[4..-2].split(',')
             dice = []
@@ -34,6 +34,12 @@ class DiceFactory
             dice = []
             for spec in specs
                 dice.push(this.createDie(spec)) unless spec == ""
-            return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)            
+            return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)
 
 window.DiceRoller.diceFactory = new DiceFactory()
+
+window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
+    diceCombo = this.create(attr.spec)
+    for i in [0..diceCombo.dice.length-1]
+        diceCombo.dice[i].roll = attr.rolls[i]
+    diceCombo

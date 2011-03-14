@@ -6,6 +6,7 @@ class DiceRoller
         this.observers = []
         this.element = jQuery(pane_selector)
         this.rollArea = jQuery('.rollArea')
+        this.storage = new window.CachedRESTStorage("http://nimbusly-diceroller.appspot.com", "id", window.DiceRoller.DiceCombination) if window.CachedRESTStorage.isAvailable()
         this.setDiceFromSpec("d6")
         this.setUpRollArea()
         this.refreshView()
@@ -38,6 +39,13 @@ class DiceRoller
         this.dice = this.dice.add(die)
         this.refreshView()
     
+    newKey: ->
+        (new Number(this.storage.allKeys[-1]) + 1).toString()
+        
+    saveDiceSet: (dice) ->
+        dice.id = this.newKey() unless dice.id
+        this.storage.put(dice)
+    
     removeDie: (die) ->
         this.dice = this.dice.remove(die)
         this.refreshView()
@@ -45,24 +53,19 @@ class DiceRoller
     setUpRollArea: () ->
         jQuery('#roll .title').click (event) =>
             this.rollDice()
+        if this.storage
+            jQuery('#roll .save').click (event) =>
+                this.saveDiceSet(this.dice)
+        else
+            jQuery('#roll .save').hide()
             
     DICE_SPECS = ['d4','d6','d8','d10','d12','s4','s6','s8','s10','s12','dF','+1','-1']
-    QUICK_PICKS = [
-        ['extra d4','s4'],
-        ['extra d6','s6'],
-        ['extra d8','s8'],
-        ['extra d10','s10'],
-        ['extra d12','s12'],
-        ['wildcard d4','max(s4,s6)'],
-        ['wildcard d6','max(s6,s6)'],
-        ['wildcard d8','max(s8,s6)'],
-        ['wildcard d10','max(s10,s6)'],
-        ['wildcard d12','max(s12,s6)']]
         
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#savedDice')
-        for pick in QUICK_PICKS
-            diceSelectionArea.append(tmpl('diceSetViewTemplate', { spec: pick[1], name: pick[0] }))
+        this.storage.allItems (diceSets) ->
+            for diceSet in diceSets
+                diceSelectionArea.append(tmpl('diceSetViewTemplate', diceSet))
         jQuery(".diceSetPick").click (event) =>
             newSpec = jQuery(event.currentTarget).attr('spec')
             this.setDiceFromSpec(newSpec) if newSpec 
