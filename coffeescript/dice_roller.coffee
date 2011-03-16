@@ -6,7 +6,9 @@ class DiceRoller
         this.observers = []
         this.element = jQuery(pane_selector)
         this.rollArea = jQuery('.rollArea')
-        this.storage = new window.CachedRESTStorage("http://nimbusly-diceroller.appspot.com", "id", window.DiceRoller.DiceCombination) if window.CachedRESTStorage.isAvailable()
+        if window.CachedRESTStorage.isAvailable()
+            this.storage = new window.CachedRESTStorage(
+                "http://nimbusly-diceroller.appspot.com", "key", window.DiceRoller.diceFactory)
         this.setDiceFromSpec("d6")
         this.setUpRollArea()
         this.refreshView()
@@ -18,6 +20,7 @@ class DiceRoller
         
     setDiceFromSpec: (spec) ->
         this.dice = window.DiceRoller.diceFactory.create(spec)
+        this.refreshView()
     
     refreshView: ->
         for observer in this.observers
@@ -40,10 +43,13 @@ class DiceRoller
         this.refreshView()
     
     newKey: ->
-        (new Number(this.storage.allKeys[-1]) + 1).toString()
+        keys = this.storage.allKeys()
+        highKey = keys[keys.length - 1]
+        highest = new Number(highKey)
+        if isNaN(highest) then "0" else (highest + 1).toString()
         
     saveDiceSet: (dice) ->
-        dice.id = this.newKey() unless dice.id
+        dice.key = this.newKey() unless dice.key
         this.storage.put(dice)
     
     removeDie: (die) ->

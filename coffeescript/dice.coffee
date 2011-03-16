@@ -28,6 +28,9 @@ class Die
         
     probToRollUnder: (target) -> this.probToBeat(target).not()
     
+    toAttributes: ->
+        { typeId: this.typeId, rolls: [this.currentRoll], key: this.key }
+
 # A simple die - randomly generates a number between 1 and size
 class SimpleDie extends Die
 

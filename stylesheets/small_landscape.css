@@ -1,4 +1,6 @@
 #roll { position: absolute; top: 0; left: 0; width: 60%; height: 100%; }
-#odds { display: none; position: absolute; bottom: 0; left: 0; width: 60%; height: 100%; }
-#dieSelector { position: absolute; top: 0; right: 0; width: 40%; height: 100%; }
-#savedDice { position: absolute; bottom: 0; right: 0; width: 40%; height: 100%;}
+#odds { display: none; position: absolute; top: 0; left: 0; width: 60%; height: 100%; }
+#dieSelector { display: none; position: absolute; top: 0; right: 0; width: 40%; height: 100%; }
+#savedDice { display: none; position: absolute; top: 0; right: 0; width: 40%; height: 100%; }
+
+.title { background-color: yellow; }

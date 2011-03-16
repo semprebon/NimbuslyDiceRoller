@@ -66,6 +66,7 @@ class CachedRESTStorage
         data = this.attributesFromItem(data)
         state = DIRTY if state == undefined
         data_str = JSON.stringify({ 'state': state, 'data': data })
+        console.log("Writing " + data_str + " to " + this.urlFor(data))
         localStorage[this.urlFor(data)] = data_str
 
     # Puts or replaces an item on the remote server
@@ -214,14 +215,13 @@ class CachedRESTStorage
         
     attributesFromItem: (item) -> if item && item.toAttributes then item.toAttributes() else item
     
-    itemFromAttributes: (attributes) -> 
-        if attributes && this.klass &&  !(attributes instanceof this.klass)
-            if this.klass.itemFromAttributes
-                this.klass.itemFromAttributes(attributes)
-            else
-                new this.klass(attributes)
-        else 
-            attributes
+    itemFromAttributes: (attributes) ->
+        return attributes unless this.klass && attributes
+        return attributes if (typeof(this.klass) == "function") && attributes instanceof this.klass
+        if this.klass.itemFromAttributes
+            this.klass.itemFromAttributes(attributes)
+        else
+            new this.klass(attributes)
     
     allKeys: -> this.keysWithPrefix("").sort()
         

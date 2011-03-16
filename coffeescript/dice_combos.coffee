@@ -17,13 +17,13 @@ class DiceCombination
         new this.constructor(newDice)
         
     toAttributes: ->
-        spec = (die.typeId for die in this.dice).join('+')
         rolls = (die.roll for die in this.dice)
-        { spec: spec, rolls: rolls }
+        { typeId: this.typeId, rolls: rolls, key: this.key }
         
 class DiceSum extends DiceCombination
     constructor: (dice) -> 
         super(dice)
+        this.typeId = (die.typeId for die in dice).join('+')
         this.min = 0
         this.max = 0
         for die in dice
@@ -87,6 +87,7 @@ class DicePickHighest extends DiceCombination
     constructor: (numToPick, dice) ->
         this.numToPick = numToPick
         super(dice)
+        this.typeId = "max(" + (die.typeId for die in dice).join(',') + ")"
         this.min = this.minRollOn(this.dice)
         this.max = this.maxRollOn(this.dice)        
 

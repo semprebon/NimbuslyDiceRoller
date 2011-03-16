@@ -2,3 +2,5 @@
 #odds { display: none; position: absolute; top: 0; right: 0; width: 40%; height: 40%; }
 #dieSelector { position: absolute; bottom: 0; left: 0; width: 60%; height: 40%; }
 #savedDice { position: absolute; bottom: 0; right: 0; width: 40%; height: 60%;}
+
+.title { background-color: green; }

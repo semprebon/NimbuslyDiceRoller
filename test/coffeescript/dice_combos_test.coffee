@@ -41,6 +41,9 @@ test "removing a die should result in new combination", 2, ->
     dice = diceAdded.remove(diceAdded.dice[1])
     equal(dice.dice.length, 1, "should now have 1 die")
     equal(dice.dice[0].typeId, "s6", "first dice should be s6")
+
+test "s6+s4 should generate spec", 1, ->
+    equal(diceAdded.typeId, "s6+d4", "spec should be s6+d4")
     
 # Test highest combination
 diceHighest = new DiceRoller.DicePickHighest(1, [new DiceRoller.SimpleDie(6), new DiceRoller.SimpleDie(4)])
@@ -54,6 +57,8 @@ test "max(d6,d4) should roll between 1 and 6", 10, ->
     for i in [1..10]
         r = diceHighest.roll()
         ok((1 <= r) && (r <= 6), 'roll between 1 and 6')
+test "max(d6,d4) should generate spec", 1, ->
+    equal(diceHighest.typeId, "max(d6,d4)")
 
 diceHighest2 = new DiceRoller.DicePickHighest(2, [
         new DiceRoller.SimpleDie(6), 
@@ -62,3 +67,4 @@ diceHighest2 = new DiceRoller.DicePickHighest(2, [
     ])
 test "max 2 of (d6,d4,d2) should have correct probability", 1, ->
     nearlyEqual(diceHighest2.probToRoll(2).prob, 4.0/48, "must roll 2s or 1s, (122x3 + 222x1)=4 ways")
+
