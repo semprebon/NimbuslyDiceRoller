@@ -19,9 +19,13 @@ class DiceRoller
         this.observers.push(viewController)
         
     setDiceFromSpec: (spec) ->
-        this.dice = window.DiceRoller.diceFactory.create(spec)
-        this.refreshView()
+        this.setDiceSet(window.DiceRoller.diceFactory.create(spec))
     
+    setDiceSet: (diceSet) ->
+        this.dice = diceSet
+        jQuery('#roll .title .show span').text(this.dice.title)
+        this.refreshView()
+
     refreshView: ->
         for observer in this.observers
             observer.update(this.dice)
@@ -36,6 +40,18 @@ class DiceRoller
         this.dice.roll()
         this.refreshView()
     
+    editTitle: ->
+        jQuery('#roll .title .edit input').val(jQuery('#roll .title .show span').text())
+        jQuery('#roll .title .show').hide()
+        jQuery('#roll .title .edit').show()
+    
+    saveTitle: ->
+        newTitle = jQuery('#roll .title .edit input').val()
+        this.dice.title = newTitle
+        jQuery('#roll .title .show span').text(newTitle)
+        jQuery('#roll .title div.edit').hide()
+        jQuery('#roll .title div.show').show()
+
     addDice: (die) ->
         unless this.dice instanceof window.DiceRoller.DiceCombination
             this.dice = new window.DiceRoller.DiceSum([this.dice])
@@ -57,11 +73,11 @@ class DiceRoller
         this.refreshView()
 
     setUpRollArea: () ->
-        jQuery('#roll .title').click (event) =>
-            this.rollDice()
+        jQuery('#roll .title button.edit').click (event) => this.editTitle()
+        jQuery('#roll .title button.save').click (event) => this.saveTitle()
+        jQuery('#roll .roll').click (event) => this.rollDice()
         if this.storage
-            jQuery('#roll .save').click (event) =>
-                this.saveDiceSet(this.dice)
+            jQuery('#roll .save').click (event) => this.saveDiceSet(this.dice)
         else
             jQuery('#roll .save').hide()
             
@@ -71,10 +87,13 @@ class DiceRoller
         diceSelectionArea = jQuery('#savedDice')
         this.storage.allItems (diceSets) ->
             for diceSet in diceSets
+                diceSet.title = diceSet.typeId unless diceSet.title
                 diceSelectionArea.append(tmpl('diceSetViewTemplate', diceSet))
+                elem = document.getElementById('select-' + diceSet.key)
+                elem.diceSet = diceSet if elem
         jQuery(".diceSetPick").click (event) =>
-            newSpec = jQuery(event.currentTarget).attr('spec')
-            this.setDiceFromSpec(newSpec) if newSpec 
+            diceSet = event.currentTarget.diceSet
+            this.setDiceSet(diceSet) if diceSet 
 
     setUpDieSelector: ->
         diceSelectionArea = jQuery('#dieSelector')

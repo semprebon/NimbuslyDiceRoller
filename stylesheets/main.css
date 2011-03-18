@@ -4,6 +4,7 @@
 #dieSelector { background-color: #110; color: #fff;  }
 
 /* roll pane */
+#roll .title { width: 100%; height: 1.2em;}
 #roll .dice {
     position: absolute; left: 50%; height: 50%;
     margin-width: -50%;

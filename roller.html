@@ -30,11 +30,17 @@
       <div id="probabilityChart">&nbsp;</div>
     </div>
     <div id='roll' class='pane'>
-      <button class="title">Test</button>
+      <div class="title">
+        <div class="show"><span>Test</span><button class="edit">Edit</button></div>
+        <div class="edit" style="display:none">
+          <input id="title"><button class="save">Save</button>
+        </div>
+      </div>
       <div class="rollArea">
         <div class="dice"></div>
         <div class="buttons" style="clear: both;">
-          <button class="save" >save</button>
+          <button class="save">Save</button>
+          <button class="roll">Roll</button>
         </div>
       </div>
       <div class="rollResult"></div>
@@ -46,7 +52,7 @@
 
   <!-- dice_set_view_template is used to display selectable dice sets -->
   <script type="text/html" id="diceSetViewTemplate">
-    <button class="diceSetPick" spec="<%= typeId %>" id="<%=key%>"><%= typeId %></button>
+    <button class="diceSetPick" spec="<%= typeId %>" id="select-<%=key%>"><%= title %></button>
   </script>
 
   <!-- dice_view_template is used to display a single die in the main roll area -->

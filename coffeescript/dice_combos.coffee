@@ -18,7 +18,7 @@ class DiceCombination
         
     toAttributes: ->
         rolls = (die.roll for die in this.dice)
-        { typeId: this.typeId, rolls: rolls, key: this.key }
+        { typeId: this.typeId, rolls: rolls, key: this.key, title: this.title }
         
 class DiceSum extends DiceCombination
     constructor: (dice) -> 

@@ -40,8 +40,9 @@ window.DiceRoller.diceFactory = new DiceFactory()
 
 window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
     diceCombo = this.create(attr.typeId)
-    diceCombo.key = attr.key
     diceCombo = new window.DiceRoller.DiceSum([diceCombo]) if diceCombo instanceof window.DiceRoller.Die  
+    diceCombo.key = attr.key
+    diceCombo.title = attr.title
     for i in [0..diceCombo.dice.length-1]
         diceCombo.dice[i].roll = attr.rolls[i]
     diceCombo
