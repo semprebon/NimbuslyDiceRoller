@@ -28,7 +28,7 @@ class DiceFactory
             dice = []
             for spec in specs
                 dice.push(this.createDie(spec)) unless spec == ""
-            return new window.DiceRoller.DicePickHighest(1, dice)            
+            return new window.DiceRoller.DicePickHighest(1, dice)
         else
             specs = spec.replace(/-/, "+-").split('+')
             dice = []
@@ -40,9 +40,10 @@ window.DiceRoller.diceFactory = new DiceFactory()
 
 window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
     diceCombo = this.create(attr.typeId)
-    diceCombo = new window.DiceRoller.DiceSum([diceCombo]) if diceCombo instanceof window.DiceRoller.Die  
+    diceCombo = new window.DiceRoller.DiceSum([diceCombo]) if diceCombo instanceof window.DiceRoller.Die
+    diceCombo.computeResult()
     diceCombo.key = attr.key
     diceCombo.title = attr.title
     for i in [0..diceCombo.dice.length-1]
-        diceCombo.dice[i].roll = attr.rolls[i]
+        diceCombo.dice[i].currentRoll = attr.rolls[i]
     diceCombo

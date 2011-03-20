@@ -80,7 +80,7 @@ class DiceSum extends DiceCombination
         total = 0
         for die in this.dice
             total = total + die.currentRoll
-        total
+        this.currentRoll = total
 
 # Dice representing dice pools where we pick the highest n dice from a pool
 class DicePickHighest extends DiceCombination
@@ -135,8 +135,9 @@ class DicePickHighest extends DiceCombination
         total = null
         for die in this.dice
             total = if total then Math.max(total, die.currentRoll) else die.currentRoll
-        total
+        this.currentRoll = total
 
+        
 window.DiceRoller.DiceCombination = DiceCombination
 window.DiceRoller.DiceSum = DiceSum
 window.DiceRoller.DicePickHighest = DicePickHighest

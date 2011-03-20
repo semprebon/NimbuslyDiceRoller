@@ -4,12 +4,16 @@
     <!-- Disable zoom on mobile browser -->
     <meta content='True' name='HandheldFriendly' />
     <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
 
     <!-- Ensure cache gets updated when new version ready -->
     <script type="text/javascript">
     window.applicationCache.onupdateready = function() { window.applicationCache.swapCache(); }
     </script>
+    
+    <!-- Homescreen Icon -->
+    <link rel="apple-touch-icon" href="/images/app_icon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/images/app_icon.png"/>
     
     <script type="text/javascript" src="/javascript/jquery-1.4.4.js"></script>
     <script type="text/javascript" src="/javascript/jquery.flot.js"></script>
@@ -23,7 +27,8 @@
     <script type="text/javascript" src="/javascript/generated/dice_view.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_roller.js"></script>
     <script type="text/javascript" src="/javascript/generated/dice_calculator.js"></script>
-    <link rel="stylesheet" href="stylesheets/mobile.css" type="text/css" media="handheld" />
+    <link rel="stylesheet" href="stylesheets/reset.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" type="text/css"/>
     <link rel="stylesheet" href="stylesheets/main.css" type="text/css">
     <!--link rel="stylesheet" href="stylesheets/large_landscape.css" type="text/css"/-->
     <link rel="stylesheet" href="stylesheets/small_portrait.css" type="text/css"/>
@@ -34,29 +39,27 @@
     <!--link rel="stylesheet" href="stylesheets/large_portrait.css" type="text/css" 
         media="only screen and (min-device-width: 801px) and (orientation: portrait)" /-->
     <link rel="stylesheet" href="stylesheets/hdpi.css" type="text/css"/>
-    <link rel="stylesheet" href="stylesheets/xhdpi.css" type="text/css" 
-      media="only screen and (min-resolution: 320dpi)" />
+    <!--link rel="stylesheet" href="stylesheets/xhdpi.css" type="text/css" media="only screen and (min-resolution: 320dpi)"-->
   </head>
   <body>
-    <div id='odds' class='pane'>
-      <div id="probabilityChart">&nbsp;</div>
+    <div id="title">
+      <div class="show"><span>Test</span></div>
+      <div class="edit" style="display:none"><input id="title"></div>
     </div>
-    <div id='roll' class='pane active'>
-      <div class="title">
-        <div class="show"><span>Test</span></div>
-        <div class="edit" style="display:none"><input id="title"></div>
-      </div>
-      <div class="rollArea">
+    <div id='activeArea'>
+      <div id='roll' class='pane active'>
         <div class="dice"></div>
+        <div class="rollResult"></div>
       </div>
-      <div class="rollResult"></div>
+      <div id="selectionArea">
+          <div id="savedDice" class='pane active'></div>
+          <div id="dieSelector" class='pane'></div>
+      </div>
     </div>
-    <div id="savedDice" class='pane active'></div>
-    <div id="dieSelector" class='pane'></div>
     <div id="mainButtons" style="clear: both;">
-      <button class="roll">Roll</button>
-      <button class="save" style="display:none">Save</button>
-      <button class="edit" >Edit</button>
+      <button class="roll"><img src="/images/roll_icon.png" alt="Roll"/></button>
+      <button class="save" style="display:none"><img src="/images/save_icon.png" alt="Save"/></button>
+      <button class="edit" ><img src="/images/edit_icon.png" alt="Edit"/></button>
     </div>
   </body>
   <!-- Templates -->
@@ -78,8 +81,8 @@
   $(document).ready(function() {
     console.log('************************* Loaded! **************************')
     roller = new window.DiceRoller.DiceRoller('#roll')
-    odds = new window.DiceRoller.DiceCalculator('#odds')
-    roller.addObserver(odds)
+    //odds = new window.DiceRoller.DiceCalculator('#odds')
+    //roller.addObserver(odds)
   })
 </script>
 

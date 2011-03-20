@@ -3,4 +3,5 @@
 #dieSelector { position: absolute; top: 0; right: 0; width: 30%; height: 50%; }
 #savedDice { position: absolute; bottom: 0; right: 0; width: 30%; height: 50%;}
 
+.onlyBig { display: inherit }
 .title { background-color: blue; }

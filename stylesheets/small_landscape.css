@@ -1,6 +1,10 @@
+body { font-size: 
 #roll { position: absolute; top: 0; left: 0; width: 60%; height: 100%; }
 #odds { display: none; position: absolute; top: 0; left: 0; width: 60%; height: 100%; }
 #dieSelector { display: none; position: absolute; top: 0; right: 0; width: 40%; height: 100%; }
 #savedDice { display: none; position: absolute; top: 0; right: 0; width: 40%; height: 100%; }
 
+.onlyBig { display: none; }
+.pane { display: none; }
+.pane .active { display: block; }
 .title { background-color: yellow; }

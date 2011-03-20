@@ -1,6 +1,13 @@
-#roll { position: absolute; top: 0; left: 0; width: 100%; height: 70%; }
-#odds { display: none; position: absolute; top: 8%; left: 0; width: 100%; height: 70%; }
-#dieSelector { position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; }
-#savedDice { position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;}
+#title { position: relative;  width: 100%; height: 1.2em; z-index: 3; }
+#activeArea { position: absolute; top: 1.2em; bottom: 1.4em; width: 100%; }
+#roll { position: absolute; width: 100%; height: 70%; z-index: 1}
+#odds { position: absolute; width: 100%; height: 70%; z-index: -1}
+#selectionArea { position: absolute; bottom: 0; width: 100%; height:30%; z-index: 2 }
+#dieSelector { position: absolute; width: 100%; height: 100%; }
+#savedDice { position: absolute; width: 100%; height: 100%;}
+#mainButtons { position: absolute; bottom: 0; width: 100%; height: 54px; }
 
-.title { background-color: red; }
+.onlyBig { display: none; }
+.pane { display: none }
+.pane.active { display: block }
+

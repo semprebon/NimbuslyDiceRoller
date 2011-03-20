@@ -1,4 +1,4 @@
 /* Handle screens with density less than 320dpi */
 
 body { font-size: 40px; }
-.dieView { width: 120px; height: 120px; }
+.dieView { width: 76px; height: 76px; margin: 4px; }

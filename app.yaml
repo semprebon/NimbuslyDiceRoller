@@ -4,6 +4,12 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /cache.manifest
+  static_files: cache.manifest
+  mime_type: text/cache-manifest
+  upload: cache.manifest
+  expiration: 1s
+  
 - url: /stylesheets
   static_dir: stylesheets
 
@@ -14,12 +20,17 @@ handlers:
   static_dir: images
 
 - url: /
-  static_files: roller.html
-  upload: roller.html
+  static_files: mobile_roller.html
+  upload: mobile_roller.html
+
+- url: /(.*\.html)
+  static_files: \1
+  upload: .*\.html
 
 - url: /test
   static_dir: test
 
 - url: .*
   script: main.py
+
 

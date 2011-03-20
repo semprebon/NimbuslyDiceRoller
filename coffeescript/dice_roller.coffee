@@ -2,21 +2,40 @@ DieView = window.DiceRoller.DieView
 DiceView = window.DiceRoller.DiceView
 
 class DiceRoller
+    
+    DIE_TYPE_IDS = ['d4','d6','d8','d10','d12','s4','s6','s8','s10','s12','dF']    
+
     constructor: (pane_selector) ->
         this.observers = []
         this.element = jQuery(pane_selector)
-        this.rollArea = jQuery('.rollArea')
-        if window.CachedRESTStorage.isAvailable()
-            this.storage = new window.CachedRESTStorage(
-                "http://nimbusly-diceroller.appspot.com", "key", window.DiceRoller.diceFactory)
-        this.setDiceFromSpec("d6")
+        this.initializeStorage()
+        this.getMetrics()
         this.setUpRollArea()
         this.refreshView()
         this.setUpDieSelector()
         this.setUpSavedDice()
+        this.setupMainButtons()
+        this.activateSavedDice()
+        
+    centerHorizontal: (el) ->
+        parent = el.offsetParent()
+        el.css("left", (parent.width() - el.width()) / 2)
+        
+    centerVertical: (el) ->
+        parent = el.offsetParent()
+        el.css("bottom", (parent.height() - el.height()) / 2)
+
+    centerElement: (el) ->
+        this.centerHorizontal(el)
+        this.centerVertical(el)
 
     addObserver: (viewController) ->
         this.observers.push(viewController)
+        
+    # Methods for working with the roll area
+    refreshLayout: ->
+        this.centerElement(jQuery('#roll .dice'))
+        this.centerVertical(jQuery('#roll .rollResult'))
         
     setDiceFromSpec: (spec) ->
         this.setDiceSet(window.DiceRoller.diceFactory.create(spec))
@@ -31,58 +50,125 @@ class DiceRoller
             observer.update(this.dice)
         jQuery('#roll .dice').empty()
         new DiceView(jQuery('#roll .dice'), this.dice)
-        jQuery(".rollResult").text(this.currentRoll)
+        this.dice.computeResult() if this.dice.computeResult
+        jQuery("#roll .rollResult").text(this.dice.currentRoll)
+        this.refreshLayout()
         jQuery("#roll .dieView").click (event) => 
             die = event.currentTarget.controller.die
             this.removeDie(die)
         
+    # Methods for working with the main action buttons at the bottom of the screen
+    
+    mainButton: (name) -> jQuery('#mainButtons .' + name)
+    
+    mainButtonRefresh: ->
+        count = jQuery("#mainButtons button:visible").length
+        outerButtonWidth = jQuery('#mainButtons').width() / count
+        padding = jQuery('#mainButtons .roll').outerWidth() - jQuery('#mainButtons .roll').width()
+        jQuery("#mainButtons button:visible").width(outerButtonWidth - padding)
+    
+    showMainButton: (name) -> this.mainButton(name).show(); this.mainButtonRefresh()
+        
+    hideMainButton: (name) -> this.mainButton(name).hide(); this.mainButtonRefresh()
+    
+    switchMainButtons: (toShow, toHide) -> 
+        this.mainButton(toShow).show()
+        this.mainButton(toHide).hide()
+        this.mainButtonRefresh()
+    
+    onMainButtonClick: (name, handler) -> this.mainButton(name).click(handler)
+    
+    # Methods for working with storage
+    
+    initializeStorage: ->
+        if window.CachedRESTStorage.isAvailable()
+            this.storage = new window.CachedRESTStorage(
+                "http://nimbusly-diceroller.appspot.com", "key", window.DiceRoller.diceFactory)
+        else
+            console.log("No local storage")
+        
+    newKey: ->
+        keys = this.storage.allKeys()
+        highKey = keys[keys.length - 1]
+        highest = new Number(highKey)
+        if isNaN(highest) then "0" else (highest + 1).toString()
+    
+    
+    # Methods for manipulating the title
+    
+    editTitle: ->
+        jQuery('#title .edit input').val(jQuery('#title .show span').text())
+        jQuery('#title .show').hide()
+        jQuery('#title .edit').show()
+        
+    saveTitle: ->
+        newTitle = jQuery('#title .edit input').val()
+        this.dice.title = newTitle
+        jQuery('#title .show span').text(newTitle)
+        jQuery('#title div.edit').hide()
+        jQuery('#title div.show').show()
+        
+    # Methods for working with the selection area
+    
+    activateSavedDice: ->
+        jQuery('#savedDice').addClass('active')
+        jQuery('#dieSelector').removeClass('active')
+        this.selectionAreaHeight(this.rollDieSize)
+        
+    activateDieSelector: ->
+        jQuery('#savedDice').removeClass('active')
+        jQuery('#dieSelector').addClass('active')
+        height = this.activeAreaHeight - this.rollDieSize
+        this.selectionAreaHeight(height)
+
+    selectionAreaHeight: (height) ->
+        jQuery('#roll').height(this.activeAreaHeight - height)
+        jQuery('#selectionArea').height(height)
+        this.refreshLayout()
+        
+    # Handlers
+
+    editDiceSet: ->
+        console.log('editDiceSet')
+        this.editTitle()
+        this.switchMainButtons('save', 'edit')
+        this.activateDieSelector()
+    	
+    saveDiceSet: (dice) ->
+        console.log('saveDiceSet:' + JSON.stringify(dice))
+        this.saveTitle()
+        this.activateSavedDice()
+        this.switchMainButtons('edit', 'save')
+        this.dice.key = this.newKey() unless this.dice.key
+        this.storage.put(this.dice)
+    
     rollDice: ->
         this.dice.roll()
         this.refreshView()
     
-    editTitle: ->
-        jQuery('#roll .title .edit input').val(jQuery('#roll .title .show span').text())
-        jQuery('#roll .title .show').hide()
-        jQuery('#roll .title .edit').show()
-    
-    saveTitle: ->
-        newTitle = jQuery('#roll .title .edit input').val()
-        this.dice.title = newTitle
-        jQuery('#roll .title .show span').text(newTitle)
-        jQuery('#roll .title div.edit').hide()
-        jQuery('#roll .title div.show').show()
-
+    removeDie: (die) ->
+        console.log('removeDie:' + die.typeId + ' from ' + this.dice.typeId)
+        this.dice = this.dice.remove(die)
+        this.refreshView()
+        
     addDice: (die) ->
         unless this.dice instanceof window.DiceRoller.DiceCombination
             this.dice = new window.DiceRoller.DiceSum([this.dice])
         this.dice = this.dice.add(die)
         this.refreshView()
     
-    newKey: ->
-        keys = this.storage.allKeys()
-        highKey = keys[keys.length - 1]
-        highest = new Number(highKey)
-        if isNaN(highest) then "0" else (highest + 1).toString()
-        
-    saveDiceSet: (dice) ->
-        dice.key = this.newKey() unless dice.key
-        this.storage.put(dice)
+    # UI Setup
     
-    removeDie: (die) ->
-        this.dice = this.dice.remove(die)
-        this.refreshView()
+    getMetrics: () ->
+        this.rollDieSize = 120
+        this.mainButtonHeight = jQuery('#mainButtons').height()
+        this.titleHeight = jQuery('#title').height()
+        this.screenHeight = jQuery('body').height()
+        this.activeAreaHeight = this.screenHeight - (this.mainButtonHeight + this.titleHeight)
 
     setUpRollArea: () ->
-        jQuery('#roll .title button.edit').click (event) => this.editTitle()
-        jQuery('#roll .title button.save').click (event) => this.saveTitle()
-        jQuery('#roll .roll').click (event) => this.rollDice()
-        if this.storage
-            jQuery('#roll .save').click (event) => this.saveDiceSet(this.dice)
-        else
-            jQuery('#roll .save').hide()
-            
-    DICE_SPECS = ['d4','d6','d8','d10','d12','s4','s6','s8','s10','s12','dF','+1','-1']
-        
+        this.setDiceFromSpec("d6")
+
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#savedDice')
         this.storage.allItems (diceSets) ->
@@ -97,11 +183,19 @@ class DiceRoller
 
     setUpDieSelector: ->
         diceSelectionArea = jQuery('#dieSelector')
-        for dieSpec in DICE_SPECS
+        for dieSpec in DIE_TYPE_IDS
             die = window.DiceRoller.diceFactory.create(dieSpec)
             diceSelectionArea.append(tmpl('dieViewTemplate', { id: "dieViewSelect-" + dieSpec, die: die }))
         jQuery('#dieSelector .dieView').click (event) =>
             spec = jQuery(event.currentTarget).attr('spec')
             this.addDice(window.DiceRoller.diceFactory.create(spec))
+ 
+    setupMainButtons: ->
+        this.onMainButtonClick('roll', => this.rollDice())
+        this.onMainButtonClick('edit', => this.editDiceSet())
+        this.onMainButtonClick('save', => this.saveDiceSet())
         
+        this.showMainButton('roll')
+        this.switchMainButton('edit','save')
+
 window.DiceRoller.DiceRoller = DiceRoller
