@@ -45,6 +45,13 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2941"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -54,7 +61,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="235.882"
+     inkscape:cx="359.60711"
      inkscape:cy="486.73453"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -85,11 +92,6 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       d="M 560.18338,564.9052 C 465.1597,732.16428 466.11651,732.48824 466.11651,732.48824 M 510,435.93361 C 560.50732,563.9484 560.50732,563.9484 560.50732,563.9484 L 730.9229,599.25133 M 679.1197,475.06374 c -22.79601,-15.23072 -150.00385,-44.3243 -171.34219,-42.01559 -15.28437,9.60195 -76.21022,118.99355 -86.80808,144.58574 -1.53062,48.19914 35.35756,141.66955 43.55742,153.24965 54.75538,23.26642 176.8193,32.13869 176.8193,32.13869 0,0 75.57975,-115.25385 92.78615,-166.95019 2.4287,-20.01966 -36.7217,-98.77108 -55.0126,-121.0083 z"
-       style="fill:none;stroke:#000000;stroke-width:10.10000038;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3682"
-       sodipodi:nodetypes="cccccccccccc" />
     <g
        id="g4069"
        inkscape:export-xdpi="13.767542"
@@ -487,5 +489,19 @@
            inkscape:transform-center-y="10.794483" />
       </g>
     </g>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       d="m 668.89469,475.59768 c -58.31625,-55.45779 -149.2139,-54.55022 -203.04057,2.05085 -53.82667,56.60107 -50.19007,147.45226 8.12619,202.91004 58.31624,55.45778 149.23544,54.52757 203.06211,-2.07349 53.82667,-56.60108 50.16852,-147.42963 -8.14773,-202.8874 z m -52.00149,21.4875 30.02741,28.55557 -45.28836,47.62266 48.66435,46.27898 -30.51527,32.08812 -48.66434,-46.27897 -43.32867,45.56196 -30.02742,-28.55557 43.32867,-45.56197 -48.6417,-46.25744 30.51527,-32.08812 48.6417,46.25744 45.28836,-47.62266 z"
+       id="path3724"
+       inkscape:export-filename="/Users/semprebon/Projects/NimbuslyDiceRoller/images/delete.png"
+       inkscape:export-xdpi="14.41"
+       inkscape:export-ydpi="14.41" />
+    <path
+       inkscape:export-ydpi="14.51"
+       inkscape:export-xdpi="14.51"
+       inkscape:export-filename="/Users/semprebon/Projects/NimbuslyDiceRoller/images/create_icon.png"
+       id="path3735"
+       d="m 579.29486,739.5177 c -80.47474,0.40944 -145.39482,64.03797 -144.99741,142.14581 0.39741,78.10783 65.96173,141.10369 146.43647,140.69429 80.47473,-0.4094 145.39467,-64.06923 144.99726,-142.17707 C 725.33377,802.07289 659.76959,739.10825 579.29486,739.5177 z m -22.61315,51.52197 41.43696,-0.21083 0.33436,65.7179 67.15539,-0.34168 0.22529,44.28067 -67.15538,0.34169 0.3199,62.87418 -41.43697,0.21083 -0.3199,-62.87419 -67.12413,0.34152 -0.22529,-44.28068 67.12413,-0.34152 -0.33436,-65.71789 z"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
   </g>
 </svg>

@@ -44,6 +44,7 @@ window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
     diceCombo.computeResult()
     diceCombo.key = attr.key
     diceCombo.title = attr.title
-    for i in [0..diceCombo.dice.length-1]
-        diceCombo.dice[i].currentRoll = attr.rolls[i]
+    unless diceCombo.dice.length == 0
+        for i in [0..diceCombo.dice.length-1]
+            diceCombo.dice[i].currentRoll = attr.rolls[i]
     diceCombo

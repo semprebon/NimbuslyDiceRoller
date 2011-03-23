@@ -15,6 +15,8 @@ class DiceCombination
         for die in this.dice
             newDice.push(die) unless die == dieToRemove
         new this.constructor(newDice)
+    
+    isEmpty: -> this.dice.length == 0
         
     toAttributes: ->
         rolls = (die.roll for die in this.dice)

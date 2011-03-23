@@ -139,8 +139,9 @@ class DiceRoller
 
     editDiceSet: ->
         this.editTitle()
-        this.switchMainButtons('save', 'edit')
-        this.showMainButton('delete')
+        if this.dice.isEmpty() then this.hideMainButton('save') else this.showMainButton('save')  
+        this.hideMainButton('edit')
+        this.showMainButton('delete') if this.dice.key
         this.hideMainButton('create')
         this.activateDieSelector()
     	
@@ -170,12 +171,14 @@ class DiceRoller
     removeDie: (die) ->
         console.log('removeDie:' + die.typeId + ' from ' + this.dice.typeId)
         this.dice = this.dice.remove(die)
+        this.hideMainButton('save') if this.dice.isEmpty()
         this.refreshView()
         
     addDice: (die) ->
         unless this.dice instanceof window.DiceRoller.DiceCombination
             this.dice = new window.DiceRoller.DiceSum([this.dice])
         this.dice = this.dice.add(die)
+        this.showMainButton('save') unless this.dice.isEmpty()
         this.refreshView()
     
     # UI Setup

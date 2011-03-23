@@ -1,10 +1,10 @@
 body { font-family: Helvetica, Arial, sans-serif }
 
-#roll { background-color: #111; color: #fff; }
-#odds { background-color: #101; color: #fff;  }
-#savedDice { background-color: #011; color: #fff;  }
-#dieSelector { background-color: #110; color: #fff;  }
-#title { text-align: center; background-color: #BBB; color: #000; font-size: 1em; }
+#roll { background-color: #111; color: #fff; overflow: hidden}
+#odds { background-color: #101; color: #fff;  overflow: hidden }
+#savedDice { background-color: #011; color: #fff;  overflow: scroll }
+#dieSelector { background-color: #110; color: #fff;  overflow: scroll }
+#title { text-align: center; background-color: #BBB; color: #000; font-size: 1em;  overflow: hidden }
 #mainButtons { background-color: #BBB; color: #000; }
 
 #mainButtons img { height: 90% }
