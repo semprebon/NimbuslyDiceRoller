@@ -22,10 +22,12 @@ handlers:
 - url: /
   static_files: mobile_roller.html
   upload: mobile_roller.html
+  mime_type: text/html; charset=utf-8
 
 - url: /(.*\.html)
   static_files: \1
   upload: .*\.html
+  mime_type: text/html; charset=utf-8
 
 - url: /test
   static_dir: test

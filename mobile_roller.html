@@ -1,8 +1,11 @@
+<!DOCTYPE HTML>
 <html manifest="/cache.manifest">
 <!--html-->
   <head>
+    <title>Nimbusly Dice Roller</title>
+    <meta charset="UTF-8">
     <!-- Disable zoom on mobile browser -->
-    <meta content='True' name='HandheldFriendly' />
+    <meta content='True' name='HandheldFriendly'/>
     <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
     <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
 
@@ -40,11 +43,35 @@
         media="only screen and (min-device-width: 801px) and (orientation: portrait)" /-->
     <link rel="stylesheet" href="stylesheets/hdpi.css" type="text/css"/>
     <!--link rel="stylesheet" href="stylesheets/xhdpi.css" type="text/css" media="only screen and (min-resolution: 320dpi)"-->
+
+    <!-- Templates -->
+
+    <!-- dice_set_view_template is used to display selectable dice sets -->
+    <script type="text/html" id="diceSetViewTemplate">
+      <button class="diceSetPick" spec="<%= typeId %>" id="select-<%=key%>"><%= title %></button>
+    </script>
+
+    <!-- dice_view_template is used to display a single die in the main roll area -->
+    <script type="text/html" id="dieViewTemplate">
+      <div id="<%=id%>" class="dieView" spec="<%= die.typeId %>">
+        <img src="/images/<%=die.typeId%>_60.png">
+        <div class="roll"><%=die.currentRoll%></div>
+      </div>
+    </script>
+
+    <script type="text/javascript" >
+      $(document).ready(function() {
+        roller = new window.DiceRoller.DiceRoller('#roll')
+        //odds = new window.DiceRoller.DiceCalculator('#odds')
+        //roller.addObserver(odds)
+      })
+    </script>
   </head>
+
   <body>
     <div id="title">
       <div class="show"><span>Test</span></div>
-      <div class="edit" style="display:none"><input id="title"></div>
+      <div class="edit" style="display:none"><input name="title"></div>
     </div>
     <div id='activeArea'>
       <div id='roll' class='pane active'>
@@ -58,32 +85,10 @@
     </div>
     <div id="mainButtons" style="clear: both;">
       <button class="roll"><img src="/images/roll_icon.png" alt="Roll"/></button>
-      <button class="save" style="display:none"><img src="/images/save_icon.png" alt="Save"/></button>
-      <button class="edit" ><img src="/images/edit_icon.png" alt="Edit"/></button>
+      <button class="save"><img src="/images/save_icon.png" alt="Save"/></button>
+      <button class="edit"><img src="/images/edit_icon.png" alt="Edit"/></button>
+      <button class="delete"><img src="/images/delete_icon.png" alt="Delete"/></button>
+      <button class="create"><img src="/images/create_icon.png" alt="Create"/></button>
     </div>
   </body>
-  <!-- Templates -->
-
-  <!-- dice_set_view_template is used to display selectable dice sets -->
-  <script type="text/html" id="diceSetViewTemplate">
-    <button class="diceSetPick" spec="<%= typeId %>" id="select-<%=key%>"><%= title %></button>
-  </script>
-
-  <!-- dice_view_template is used to display a single die in the main roll area -->
-  <script type="text/html" id="dieViewTemplate">
-    <div id="<%=id%>" class="dieView" spec="<%= die.typeId %>">
-      <img src="/images/<%=die.typeId%>_60.png">
-      <div class="roll"><%=die.currentRoll%></div>
-    </div>
-  </script>
-
-<script language="javascript">
-  $(document).ready(function() {
-    console.log('************************* Loaded! **************************')
-    roller = new window.DiceRoller.DiceRoller('#roll')
-    //odds = new window.DiceRoller.DiceCalculator('#odds')
-    //roller.addObserver(odds)
-  })
-</script>
-
 </html>

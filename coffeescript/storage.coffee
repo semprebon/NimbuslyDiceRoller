@@ -224,9 +224,12 @@ class CachedRESTStorage
             new this.klass(attributes)
     
     allKeys: -> this.keysWithPrefix("").sort()
-        
+    
     allItems: (callback) -> 
-        articles = (this.getLocal(key) for key in this.allKeys())
+        articles = []
+        for key in this.allKeys()
+            item = this.getLocal(key)
+            articles.push(item) if item
         callback(articles) if callback
         articles
 

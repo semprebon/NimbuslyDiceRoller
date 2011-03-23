@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# Revision 62
+# Revision 72
 NETWORK:
 /
 /javascript/jquery-1.4.4.js
@@ -27,6 +27,8 @@ NETWORK:
 /images/roll_icon.png
 /images/edit_icon.png
 /images/save_icon.png
+/images/delete_icon.png
+/images/create_icon.png
 /images/d10_60.png
 /images/d4_60.png
 /images/dF_60.png

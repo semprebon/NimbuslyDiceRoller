@@ -108,6 +108,15 @@ class DiceRoller
         jQuery('#title div.edit').hide()
         jQuery('#title div.show').show()
         
+    # Methods for configuring modes
+    
+    setupRollMode: ->
+        this.activateSavedDice()
+        this.showMainButton('roll')
+        this.switchMainButtons('edit', 'save')
+        this.hideMainButton('delete')
+        this.showMainButton('create')
+        
     # Methods for working with the selection area
     
     activateSavedDice: ->
@@ -129,18 +138,30 @@ class DiceRoller
     # Handlers
 
     editDiceSet: ->
-        console.log('editDiceSet')
         this.editTitle()
         this.switchMainButtons('save', 'edit')
+        this.showMainButton('delete')
+        this.hideMainButton('create')
         this.activateDieSelector()
     	
     saveDiceSet: (dice) ->
-        console.log('saveDiceSet:' + JSON.stringify(dice))
         this.saveTitle()
-        this.activateSavedDice()
-        this.switchMainButtons('edit', 'save')
         this.dice.key = this.newKey() unless this.dice.key
         this.storage.put(this.dice)
+        this.setUpSavedDice()
+        this.setupRollMode()
+    
+    deleteDiceSet: ->
+        if (confirm('Delete ' + this.dice.title + "?"))
+            this.storage.delete(this.dice.key) if this.dice.key
+        this.setDiceFromSpec("d6")
+        this.setUpSavedDice()
+        this.setupRollMode()
+    
+    createDiceSet: ->
+        this.setDiceFromSpec("")
+        this.editDiceSet()
+        
     
     rollDice: ->
         this.dice.roll()
@@ -171,6 +192,7 @@ class DiceRoller
 
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#savedDice')
+        diceSelectionArea.empty()
         this.storage.allItems (diceSets) ->
             for diceSet in diceSets
                 diceSet.title = diceSet.typeId unless diceSet.title
@@ -183,6 +205,7 @@ class DiceRoller
 
     setUpDieSelector: ->
         diceSelectionArea = jQuery('#dieSelector')
+        diceSelectionArea.empty()
         for dieSpec in DIE_TYPE_IDS
             die = window.DiceRoller.diceFactory.create(dieSpec)
             diceSelectionArea.append(tmpl('dieViewTemplate', { id: "dieViewSelect-" + dieSpec, die: die }))
@@ -194,8 +217,10 @@ class DiceRoller
         this.onMainButtonClick('roll', => this.rollDice())
         this.onMainButtonClick('edit', => this.editDiceSet())
         this.onMainButtonClick('save', => this.saveDiceSet())
-        
-        this.showMainButton('roll')
-        this.switchMainButton('edit','save')
+        this.onMainButtonClick('delete', => this.deleteDiceSet())
+        this.onMainButtonClick('create', => this.createDiceSet())
+        this.setupRollMode()
+        this.switchMainButtons('edit','save')
+        this.hideMainButton('delete')
 
 window.DiceRoller.DiceRoller = DiceRoller
