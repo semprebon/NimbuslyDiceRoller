@@ -1,14 +1,15 @@
 DieView = window.DiceRoller.DieView
 DiceView = window.DiceRoller.DiceView
 
+LAST_USED_STORAGE_KEY = 'lastUsedDiceSetTypeId'
 class PageController
     
     getMetrics: () ->
-        this.rollDieSize = 120
+        @rollDieSize = 120
         footerHeight = jQuery(@pageSelector + ' .ui-footer').height()
         headerHeight = jQuery(@pageSelector + ' .ui-header').height()
         windowHeight = jQuery(window).height()
-        this.contentHeight = windowHeight - (footerHeight + headerHeight)
+        @contentHeight = windowHeight - (footerHeight + headerHeight)
 
     centerHorizontal: (el) ->
         parent = el.offsetParent()
@@ -19,8 +20,18 @@ class PageController
         el.css("bottom", (parent.height() - el.height()) / 2)
 
     centerElement: (el) ->
-        this.centerHorizontal(el)
-        this.centerVertical(el)
+        @centerHorizontal(el)
+        @centerVertical(el)
+
+    setTitle: (newTitle) ->
+        jQuery(@pageSelector + ' .ui-title').text(newTitle)
+    
+    setDiceSet: (diceSet) ->
+        @dice = diceSet
+        window.DiceRoller.currentDiceSet = diceSet
+        localStorage[LAST_USED_STORAGE_KEY] = if @dice.key then @dice.key else @dice.typeId
+        @setTitle(if diceSet.title then diceSet.title else 'Nimbusly Dice Roller')
+        @refreshView()
 
 # DiceRoller - The Main Page for the Dice Roller App
     
@@ -30,7 +41,11 @@ class DiceRoller extends PageController
         @pageSelector = pageSelector
         @observers = []
         @initializeStorage()
-        window.DiceRoller.currentDiceSet = window.DiceRoller.diceFactory.createCombo("d6")
+        keyOrTypeId = localStorage[LAST_USED_STORAGE_KEY]
+        keyOrTypeId = "d6" unless keyOrTypeId
+        diceSet = @storage.getLocal(keyOrTypeId)
+        diceSet = window.DiceRoller.diceFactory.createCombo(keyOrTypeId) unless diceSet
+        window.DiceRoller.currentDiceSet = diceSet
         jQuery(@pageSelector).live 'pageshow', (event) => 
             @getMetrics()
             @setUpRollArea()
@@ -48,22 +63,21 @@ class DiceRoller extends PageController
         
     setDiceFromSpec: (spec) ->
         dice = window.DiceRoller.diceFactory.createCombo(spec)
-        this.setDiceSet(dice)
+        @setDiceSet(dice)
     
-    setDiceSet: (diceSet) ->
-        @dice = diceSet
-        window.DiceRoller.currentDiceSet = diceSet
-        jQuery('#rollPage .ui-title').text(@dice.title)
-        @refreshView()
-
     # Redisplays the roll area with the current dice/results
     refreshView: ->
         @dice = window.DiceRoller.currentDiceSet if window.DiceRoller.currentDiceSet
         console.log("Rolling " + JSON.stringify(@dice))
-        for observer in this.observers
+        for observer in @observers
             observer.update(@dice)
+        if @dice.key
+            $(@pageSelector + ' .btn-delete').show()
+        else
+            $(@pageSelector + ' .btn-delete').hide()
+            
         jQuery('#rollPage .rollArea .dice').empty()
-        new DiceView(jQuery('#rollPage .rollArea .dice'), this.dice)
+        new DiceView(jQuery('#rollPage .rollArea .dice'), @dice)
         @dice.computeResult() if @dice.computeResult
         jQuery("#rollPage .rollResult").text(@dice.currentRoll)
         @refreshLayout()
@@ -75,13 +89,13 @@ class DiceRoller extends PageController
     
     initializeStorage: ->
         if window.CachedRESTStorage.isAvailable()
-            this.storage = new window.CachedRESTStorage(
+            @storage = new window.CachedRESTStorage(
                 "http://nimbusly-diceroller.appspot.com", "key", window.DiceRoller.diceFactory)
         else
             console.log("No local storage")
         
     newKey: ->
-        keys = this.storage.allKeys()
+        keys = @storage.allKeys()
         highKey = keys[keys.length - 1]
         highest = new Number(highKey)
         if isNaN(highest) then "0" else (highest + 1).toString()
@@ -96,7 +110,7 @@ class DiceRoller extends PageController
         
     saveTitle: ->
         newTitle = jQuery('#title .edit input').val()
-        this.dice.title = newTitle
+        @dice.title = newTitle
         jQuery('#title .show span').text(newTitle)
         jQuery('#title div.edit').hide()
         jQuery('#title div.show').show()
@@ -104,9 +118,9 @@ class DiceRoller extends PageController
     # Methods for working with the selection area
     
     selectionAreaHeight: (height) ->
-        jQuery('#roll').height(this.activeAreaHeight - height)
+        jQuery('#roll').height(@activeAreaHeight - height)
         jQuery('#selectionArea').height(height)
-        this.refreshLayout()
+        @refreshLayout()
         
     # Handlers
 
@@ -119,32 +133,32 @@ class DiceRoller extends PageController
         @refreshView()
     
     deleteDiceSet: ->
-        if (confirm('Delete ' + this.dice.title + "?"))
-            this.storage.delete(this.dice.key) if this.dice.key == undefined
-        this.setDiceFromSpec("d6")
-        this.setUpSavedDice()
-        this.setupRollMode()
+        if (confirm('Delete ' + @dice.title + "?"))
+            @storage.delete(@dice.key) if @dice.key != undefined
+        @setDiceFromSpec("d6")
+        @setUpSavedDice()
     
     saveDiceSet: (dice) ->
         @dice.title = @dice.typeId unless @dice.title
         @dice.title = window.prompt("Name of Diceset", @dice.title)
-        this.dice.key = this.newKey() unless this.dice.key
-        this.storage.put(this.dice)
-        this.setUpSavedDice()
-        this.setupRollMode()
+        @setTitle(@dice.title)
+        @dice.key = @newKey() unless @dice.key
+        @storage.put(@dice)
+        @setUpSavedDice()
     
     
     # UI Setup
    
     setUpRollArea: () ->
-        jQuery('#rollPage .ui-content').height(this.contentHeight)
+        jQuery('#rollPage .ui-content').height(@contentHeight)
         @setDiceSet(window.DiceRoller.currentDiceSet)
+        $(@pageSelector + ' .btn-delete').click => @deleteDiceSet()
         
 
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#rollPage .savedDice')
         diceSelectionArea.empty()
-        this.storage.allItems (diceSets) ->
+        @storage.allItems (diceSets) ->
             for diceSet in diceSets
                 diceSet.title = diceSet.typeId unless diceSet.title
                 diceSelectionArea.append(tmpl('diceSetViewTemplate', diceSet))
@@ -152,7 +166,7 @@ class DiceRoller extends PageController
                 elem.diceSet = diceSet if elem
         jQuery(".diceSetPick").click (event) =>
             diceSet = event.currentTarget.diceSet
-            this.setDiceSet(diceSet) if diceSet 
+            @setDiceSet(diceSet) if diceSet 
 
     setupMainButtons: ->
         jQuery('#rollPage .btn-add').click (event) => @createDiceSet()
@@ -188,7 +202,7 @@ class BuildPage extends PageController
     refreshView: ->
         diceSetElem = jQuery(@pageSelector + ' .rollArea .dice')
         diceSetElem.empty()
-        new DiceView(diceSetElem, this.dice)
+        new DiceView(diceSetElem, @dice)
         @centerElement(diceSetElem)
 
         jQuery("#buildPage .rollArea .dieView").click (event) => 
@@ -196,14 +210,18 @@ class BuildPage extends PageController
             @removeDie(die)
         
     removeDie: (die) ->
-        console.log('removeDie:' + die.typeId + ' from ' + this.dice.typeId)
+        console.log('removeDie:' + die.typeId + ' from ' + @dice.typeId)
         @setDiceSet(@dice.remove(die))
         
     addDice: (die) ->
+        [title, key] = [@dice.title, @dice.key]
         unless @dice instanceof window.DiceRoller.DiceCombination
             @dice = new window.DiceRoller.DiceSum([@dice])
-        @setDiceSet(@dice.add(die))
-        
+        @dice = @dice.add(die)
+        @dice.title = title
+        @dice.key = key
+        @setDiceSet(@dice)
+    
     setUpRollArea: () ->
         jQuery(@pageSelector + ' .ui-content').height(@contentHeight)
         @setDiceSet(window.DiceRoller.currentDiceSet)
