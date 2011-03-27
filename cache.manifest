@@ -1,8 +1,10 @@
 CACHE MANIFEST
-# Revision 75
+# Revision 5
 NETWORK:
 /
-/javascript/jquery-1.4.4.js
+http://code.jquery.com/jquery-1.5.js
+http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css
+http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.js
 /javascript/jquery.flot.js
 /javascript/jquery.flot.stack.js
 /javascript/template.js
@@ -17,12 +19,6 @@ NETWORK:
 /stylesheets/reset.css
 /stylesheets/mobile.css
 /stylesheets/main.css
-/stylesheets/large_landscape.css
-/stylesheets/small_portrait.css 
-/stylesheets/small_landscape.css 
-/stylesheets/large_portrait.css 
-/stylesheets/hdpi.css
-/stylesheets/xhdpi.css
 /images/app_icon.png
 /images/roll_icon.png
 /images/edit_icon.png

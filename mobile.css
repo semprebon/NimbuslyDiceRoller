@@ -1,0 +1,27 @@
+/* roll pagee */
+#rollPage .rollArea { width: 100%; height: 70%; position:relative; }
+#rollPage .rollArea .dice { position: absolute; }
+#rollPage .rollArea .dice .dieView { float: left; overflow: hidden; }
+
+#rollPage .selectionArea { width: 100%; height: 30%; position: relative;}
+/*
+#roll .setName { width: 100%; background-color: #000; color: #fff; font-weight: bold;}
+#roll .rollResult { position: absolute; right: 0; font-size: 250%; padding:0.1em; color: #ff5; }
+#roll .buttons { width: 100%; position: absolute; bottom: 0; }
+#roll .buttons button { width: 33%; height: 2em; }
+
+/* odds pane */
+/*#probabilityChart { width: 100%; height: 100%; background-color: #456;}
+
+/* die selector pane */
+/*#dieSelector .dieView { float: left; }
+
+/* saved dice pane */
+#savedDice .dice { float: left; }
+#savedDice .dice .dieView { float: left; }
+
+/* Pieces */
+
+.dieView { position: relative; overflow: hidden; }
+.dieView img { position: absolute; width: 100%; height: 100%; }
+.dieView .roll { position: absolute; font-size: 1.7em; color: black; text-align: center; width: 100%; height: 100%; }

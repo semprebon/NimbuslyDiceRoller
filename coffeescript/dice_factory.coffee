@@ -36,11 +36,16 @@ class DiceFactory
                 dice.push(this.createDie(spec)) unless spec == ""
             return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)
 
+    createCombo: (spec) ->
+        diceCombo = this.create(spec)
+        if diceCombo instanceof window.DiceRoller.Die
+            diceCombo = new window.DiceRoller.DiceSum([diceCombo])
+        diceCombo
+    
 window.DiceRoller.diceFactory = new DiceFactory()
 
 window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
-    diceCombo = this.create(attr.typeId)
-    diceCombo = new window.DiceRoller.DiceSum([diceCombo]) if diceCombo instanceof window.DiceRoller.Die
+    diceCombo = this.createCombo(attr.typeId)
     diceCombo.computeResult()
     diceCombo.key = attr.key
     diceCombo.title = attr.title
