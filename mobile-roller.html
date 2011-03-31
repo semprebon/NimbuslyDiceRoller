@@ -61,7 +61,7 @@
 	</head> 
 <body> 
 
-  <div data-role="page" id="rollPage"  data-theme="a"> 
+  <div data-role="page" id="rollPage"> 
   
     <div data-role="header" data-position="fixed"> 
        <!--a href="#" class='btn-add' data-role='button' data-icon='add'>Add</a-->
@@ -86,7 +86,7 @@
     
   </div> 
  
-  <div data-role="page" id="buildPage" data-theme="a"> 
+  <div data-role="page" id="buildPage"> 
     
     <div data-role="header" data-position="fixed"> 
       <a href="#rollPage" class='btn-back' data-role='button' data-icon='back'>Done</a>
@@ -106,6 +106,28 @@
         </div>
       </div>
     
+    </div> 
+    
+  </div>
+
+  <div data-role="page" id="saveDialog"> 
+    
+    <div data-role="header" data-position="fixed"> 
+      <a href="#rollPage" class='btn-back' data-role='button' data-icon='back'>Done</a>
+      <h1>Nimbusly DiceRoller - Edit</h1> 
+    </div> 
+    
+    <div data-role="content">
+    
+      <p>
+      <form action="#" method="post" data-ajax="false">
+        <div data-role="fieldcontain">
+          <label for="name">Name:</label>
+          <input type="text" name="name" id="name" value=""/>
+         </div>	
+         <button type="submit">Save to Favorites</button>
+      </form>
+      </p>
     </div> 
     
   </div>

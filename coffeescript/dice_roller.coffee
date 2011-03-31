@@ -2,6 +2,13 @@ DieView = window.DiceRoller.DieView
 DiceView = window.DiceRoller.DiceView
 
 LAST_USED_STORAGE_KEY = 'lastUsedDiceSetTypeId'
+
+# PageController is the base class for the main page UI controllers. It consists of a number of
+# utility functions for laying out the screen and accessing app-wide resources.
+#
+# Derived classes should override refreshDiceSet, which refreshes the view when the current dice set
+# is changed.
+
 class PageController
     
     getMetrics: () ->
@@ -11,29 +18,45 @@ class PageController
         windowHeight = jQuery(window).height()
         @contentHeight = windowHeight - (footerHeight + headerHeight)
 
+    # Center an element horizonatally in its parent. The parent must be positioned, and the element
+    # should be absolutely positioned.
+
     centerHorizontal: (el) ->
         parent = el.offsetParent()
         el.css("left", (parent.width() - el.width()) / 2)
         
+    # Center an element vertically in its parent. The parent must be positioned, and the element 
+    # should be absolutely positioned.
+
     centerVertical: (el) ->
         parent = el.offsetParent()
         el.css("bottom", (parent.height() - el.height()) / 2)
+
+    # Center an element in its parent. The parent must be positioned, and the element 
+    # should be absolutely positioned.
 
     centerElement: (el) ->
         @centerHorizontal(el)
         @centerVertical(el)
 
+    # Set the title of the page. Normally, the title is the name of the saved dice, if the current
+    # dice is saved.
+    
     setTitle: (newTitle) ->
         jQuery(@pageSelector + ' .ui-title').text(newTitle)
+    
+    # Sets the current dice set to the specified dice set, and updates anything that needs to
+    # be updated.
     
     setDiceSet: (diceSet) ->
         @dice = diceSet
         window.DiceRoller.currentDiceSet = diceSet
         localStorage[LAST_USED_STORAGE_KEY] = if @dice.key then @dice.key else @dice.typeId
         @setTitle(if diceSet.title then diceSet.title else 'Nimbusly Dice Roller')
-        @refreshView()
+        @refreshDiceSet()
 
-# DiceRoller - The Main Page for the Dice Roller App
+        
+# DiceRoller is the controller for the rolling page
     
 class DiceRoller extends PageController
     
@@ -50,40 +73,53 @@ class DiceRoller extends PageController
             @getMetrics()
             @setUpRollArea()
             @setUpSavedDice()
-            @refreshView()
+            @refreshDiceSet()
             @setupMainButtons()
         
     addObserver: (viewController) ->
-        @observers.push(viewController)
+        #@observers.push(viewController)
         
     # Methods for working with the roll area
     refreshLayout: ->
-        @centerElement(jQuery('#rollPage .rollArea .dice'))
-        @centerVertical(jQuery('#rollPage .rollResult'))
+        rollAreaHeight = jQuery(@pageSelector + ' .rollArea')
+        diceView = $(@pageSelector + ' .rollArea .dice')
+        @centerHorizontal(diceView)
+        diceView.css("top", (rollAreaHeight/4 - diceView.height()/2))
+        
+        resultView = $(@pageSelector + ' .rollArea .result')
+        @centerHorizontal(resultView)
+        diceView.css("top", (rollAreaHeight*3/4 - resultView.height()/2))
         
     setDiceFromSpec: (spec) ->
         dice = window.DiceRoller.diceFactory.createCombo(spec)
         @setDiceSet(dice)
     
-    # Redisplays the roll area with the current dice/results
-    refreshView: ->
-        @dice = window.DiceRoller.currentDiceSet if window.DiceRoller.currentDiceSet
-        console.log("Rolling " + JSON.stringify(@dice))
+    # refreshDiceSet redisplays the current dice set after any changes have been made.
+
+    refreshDiceSet: ->
         for observer in @observers
             observer.update(@dice)
         if @dice.key
             $(@pageSelector + ' .btn-delete').show()
         else
             $(@pageSelector + ' .btn-delete').hide()
-            
-        jQuery('#rollPage .rollArea .dice').empty()
-        new DiceView(jQuery('#rollPage .rollArea .dice'), @dice)
+        
+        if @diceView
+            @diceView.updateWith(@dice)
+        else
+            @diceView = new DiceView(jQuery('#rollPage .rollArea .dice'), @dice)
         @dice.computeResult() if @dice.computeResult
-        jQuery("#rollPage .rollResult").text(@dice.currentRoll)
+        jQuery(@pageSelector + " .rollResult").text(@dice.currentRoll)
         @refreshLayout()
-        jQuery("#rollPage .rollArea .dieView").click (event) => 
+        jQuery(@pageSelector + " .rollArea .dieView").click (event) => 
             die = event.currentTarget.controller.die
             @rollDice(die)
+    
+    # Redisplays the roll area with the current dice/results
+
+    refreshView: ->
+        @dice = window.DiceRoller.currentDiceSet if window.DiceRoller.currentDiceSet
+        @refreshDiceSet()
         
     # Methods for working with storage
     
@@ -130,7 +166,7 @@ class DiceRoller extends PageController
     
     rollDice: ->
         @dice.roll()
-        @refreshView()
+        @refreshDiceSet()
     
     deleteDiceSet: ->
         if (confirm('Delete ' + @dice.title + "?"))
@@ -154,6 +190,10 @@ class DiceRoller extends PageController
         @setDiceSet(window.DiceRoller.currentDiceSet)
         $(@pageSelector + ' .btn-delete').click => @deleteDiceSet()
         
+    setupNewDiceSavedDiceSet: ->
+        diceSet = window.DiceRoller.diceFactory.createCombo('d6')
+        diceSet.title = '*New*'
+        diceSelectionArea.append(tmpl('diceSetViewTemplate', diceSet))
 
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#rollPage .savedDice')
@@ -174,7 +214,7 @@ class DiceRoller extends PageController
         jQuery('#rollPage .btn-save').click (event) => @saveDiceSet()
         
     setupOthers: ->
-        jQuery(@pageSelector).bind('pageshow', data, (event) => @refreshView())
+        jQuery(@pageSelector).bind('pageshow', data, (event) => @refreshDiceSet())
             
 # DiceBuilder - The editing page for DiceRoller App
 
@@ -188,7 +228,7 @@ class BuildPage extends PageController
             @getMetrics()
             @setUpRollArea()
             @setUpDieSelector()
-            @refreshView()
+            @refreshDiceSet()
         
     # Methods for configuring modes
     
@@ -196,10 +236,10 @@ class BuildPage extends PageController
         @dice = diceSet
         window.DiceRoller.currentDiceSet = diceSet
         jQuery(@pageSelector + ' .ui-title').text(@dice.title)
-        @refreshView()
+        @refreshDiceSet()
 
     # Redisplays the roll area with the current dice/results
-    refreshView: ->
+    refreshDiceSet: ->
         diceSetElem = jQuery(@pageSelector + ' .rollArea .dice')
         diceSetElem.empty()
         new DiceView(diceSetElem, @dice)

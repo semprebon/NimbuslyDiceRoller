@@ -19,7 +19,7 @@ class DiceCombination
     isEmpty: -> this.dice.length == 0
         
     toAttributes: ->
-        rolls = (die.roll for die in this.dice)
+        rolls = (die.currentRoll for die in this.dice)
         { typeId: this.typeId, rolls: rolls, key: this.key, title: this.title }
         
 class DiceSum extends DiceCombination
