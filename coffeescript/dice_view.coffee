@@ -42,10 +42,8 @@ class DiceView
     
     reconstructViews: ->
         (view.unlinkFromDOM() for view in @diceViews) if @diceViews
-        @diceViews = []
         @parent.empty()
-        for die in @dice
-            @diceViews.push(new DieView(@parent, die, @css_class))
+        @diceViews = (new DieView(@parent, die, @css_class) for die in @dice)
         
     # sameDice determines if a new dice set uses the same dice as the current dice set
     

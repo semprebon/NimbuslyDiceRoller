@@ -104,7 +104,7 @@ droiddice.utilityTests = function() {
     
     test("makeCallback should return a function that calls an object's method in the object context", function() {
         var  obj = { a: 'test' };
-        obj.foo = function() { return this.a; }
+        obj.foo = function() { return @a; }
         var f = obj.foo.makeCallback(obj);
         equal(f(), "test");
     });

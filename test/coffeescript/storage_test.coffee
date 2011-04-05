@@ -8,9 +8,9 @@ class TestItemClass
         for own key, value of hash
             this[key] = value
     
-    toAttributes: -> { name: this.name, content: this.content }
+    toAttributes: -> { name: @name, content: @content }
     
-    uppercaseName: -> this.name.toUpperCase()
+    uppercaseName: -> @name.toUpperCase()
     
 TestItemClass.itemFromAttributes = (attributes) -> new this(attributes)
     

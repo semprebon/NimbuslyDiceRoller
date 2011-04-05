@@ -7,36 +7,36 @@ randomInt = (limit) -> Math.floor(Math.random() * limit)
 # Base class for die classes. This sets up a basic flat-distribution dice
 class Die
     constructor: (@min, @max) ->
-        this.size = (this.max - this.min) + 1
-        this.baseProbability = new Probability(1.0 / this.size)
-        this.roll()
+        @size = (@max - @min) + 1
+        @baseProbability = new Probability(1.0 / @size)
+        @roll()
         
-    inRange: (target) -> this.min <= target && target <= this.max
+    inRange: (target) -> @min <= target <= @max
 
-    newRollValue: -> randomInt(this.size) + this.min
+    newRollValue: -> randomInt(@size) + @min
     
-    roll: -> this.currentRoll = this.newRollValue()
+    roll: -> @currentRoll = @newRollValue()
     
-    probToRoll: (target) -> if this.inRange(target) then this.baseProbability else Probability.NEVER
+    probToRoll: (target) -> if @inRange(target) then @baseProbability else Probability.NEVER
     
     probToBeat: (target) -> 
-        return Probability.ALWAYS if target <= this.min
-        return Probability.NEVER if target > this.max
-        return new Probability((this.size - (target - this.min)) / this.size)
+        return Probability.ALWAYS if target <= @min
+        return Probability.NEVER if target > @max
+        return new Probability((@size - (target - @min)) / @size)
 
-    probToRollOver: (target) -> this.probToBeat(target+1)
+    probToRollOver: (target) -> @probToBeat(target+1)
         
-    probToRollUnder: (target) -> this.probToBeat(target).not()
+    probToRollUnder: (target) -> @probToBeat(target).not()
     
     toAttributes: ->
-        { typeId: this.typeId, rolls: [this.currentRoll], key: this.key, title: this.title }
+        { typeId: @typeId, rolls: [@currentRoll], key: @key, title: @title }
 
 # A simple die - randomly generates a number between 1 and size
 class SimpleDie extends Die
 
     constructor: (size) ->
         super(1, size)
-        this.typeId = "d" + this.size
+        @typeId = "d" + @size
     
 SimpleDie.fromString = (s) -> 
     return new SimpleDie(Number(s.slice(1))) if /^d\d+$/.test(s)
@@ -47,7 +47,7 @@ class FudgeDie extends Die
 
     constructor: () ->
         super(-1, +1)
-        this.typeId = "dF"
+        @typeId = "dF"
 
 FudgeDie.fromString = (s) ->
     return new FudgeDie() if s == "dF"
@@ -58,7 +58,7 @@ class Adjustment extends Die
 
     constructor: (value) ->
         super(value, value)
-        this.typeId = if value < 0 then "" + value else "+" + value
+        @typeId = if value < 0 then "" + value else "+" + value
 
 Adjustment.fromString = (s) ->
     return new Adjustment(Number(s)) if /^[+\-]?\d+$/.test(s)
@@ -69,26 +69,26 @@ class SavageDie extends Die
 
     constructor: (size) ->
         super(1, size)
-        this.size = size
-        this.max = Infinity
-        this.typeId = "s" + size
+        @size = size
+        @max = Infinity
+        @typeId = "s" + size
         
     newRollValue: ->
         roll = super()
         total = roll
-        while (roll == this.size)
+        while (roll == @size)
             roll = super()
             total += roll
         total
         
     probToRoll: (target) -> 
-        return this.baseProbability if target < this.size
-        return Probability.NEVER if target == this.size
-        this.baseProbability.and(this.probToRoll(target - this.size))
+        return @baseProbability if target < @size
+        return Probability.NEVER if target == @size
+        @baseProbability.and(@probToRoll(target - @size))
         
     probToBeat: (target) ->
-        return super(target) if target <= this.size
-        this.baseProbability.and(this.probToBeat(target - this.size))
+        return super(target) if target <= @size
+        @baseProbability.and(@probToBeat(target - @size))
 
 SavageDie.fromString = (s) -> 
     return new SavageDie(Number(s.slice(1))) if /^s\d+$/.test(s)

@@ -14,10 +14,10 @@ class CachedRESTStorage
     # @param {string} url  base url for the backing web service
     # @param {string} keyField  field of stored items to use as a key field
     constructor: (url, keyField, klass) ->
-        this.url = url
-        this.keyField = keyField
-        this.klass = klass
-        this.log("cached rest storage created for " + this.url, "(no key)")
+        @url = url
+        @keyField = keyField
+        @klass = klass
+        @log("cached rest storage created for #{@url}", "(no key)")
         $('#ajax_error').ajaxError((e, xhr, settings, exception) =>
             $(this).html(xhr.responseText)
         )
@@ -27,12 +27,12 @@ class CachedRESTStorage
     # @param {string} key  The key value for the item to get
     # @return item, or undefined if item not found or has been deleted
     getLocal: (key) ->
-        this.log("fetching local data", key)
-        raw = localStorage[this.urlFor(key)]
+        @log("fetching local data", key)
+        raw = localStorage[@urlFor(key)]
         return undefined if raw == undefined
         meta = JSON.parse(raw)
         return undefined if meta.state == DELETED
-        return this.itemFromAttributes(meta.data)
+        return @itemFromAttributes(meta.data)
     
     # Get item from remote storage and put it into local storage
     #
@@ -40,11 +40,11 @@ class CachedRESTStorage
     # @param {function(item)} callback  function to call after item is fetched
     # @param {function(xhr,status)} errorCallback  function to call if an AJAX error occurs
     getRemote: (key, callback, errorCallback) ->
-        this.log('fetching remote data...', key)
+        @log('fetching remote data...', key)
         item = $.ajax { 
-            url: this.urlFor(key), 
+            url: @urlFor(key), 
             dataType: 'json',
-            success: (item) => this.putLocal(item); callback(item),
+            success: (item) => @putLocal(item); callback(item),
             error: (xhr, status) => errorCallback(xhr, status)
         }
         
@@ -55,7 +55,7 @@ class CachedRESTStorage
     # @param {function(xhr,status)} errorCallback  function to call if an AJAX error occurs
     get: (key, callback, errorCallback) ->
         # optionall sync here if offline
-        item = this.getLocal(key)
+        item = @getLocal(key)
         callback(item)
 
     # Puts or replaces an item in local storage, marking it for later remote updating
@@ -63,11 +63,10 @@ class CachedRESTStorage
     # @param {object} data  Item to store
     # @param {string} state  optional state to set on the object, used internaly  
     putLocal: (data, state) ->
-        data = this.attributesFromItem(data)
+        data = @attributesFromItem(data)
         state = DIRTY if state == undefined
         data_str = JSON.stringify({ 'state': state, 'data': data })
-        console.log("Writing " + data_str + " to " + this.urlFor(data))
-        localStorage[this.urlFor(data)] = data_str
+        localStorage[@urlFor(data)] = data_str
 
     # Puts or replaces an item on the remote server
     #
@@ -75,12 +74,12 @@ class CachedRESTStorage
     # @param {function()} callback  function to call after item is put
     # @param {function(xhr,status)} errorCallback  function to call if an AJAX error occurs
     putRemote: (data, callback, errorCallback) ->
-        data = this.attributesFromItem(data)
+        data = @attributesFromItem(data)
         console.log("remote putting " + JSON.stringify(data))
         $.ajax { 
-            type: 'PUT', url: this.urlFor(data), data: data, 
-            success: (data) => this.log("remote data saved", data); callback(data) if callback,
-            error: => this.log("error", data); errorCallback() if errorCallback
+            type: 'PUT', url: @urlFor(data), data: data, 
+            success: (data) => @log("remote data saved", data); callback(data) if callback,
+            error: => @log("error", data); errorCallback() if errorCallback
         }
         
     # Puts or replaces an item, possibly also sending it to the remote server
@@ -89,29 +88,29 @@ class CachedRESTStorage
     # @param {function()} callback  function to call after item is put
     # @param {function(xhr,status)} errorCallback  function to call if an AJAX error occurs
     put: (data, callback, errorCallback) ->
-        this.putLocal(data)
-        if this.syncing()
-            this.log("storing remote data...", data)
-            this.putRemote(data, callback, errorCallback)
+        @putLocal(data)
+        if @syncing()
+            @log("storing remote data...", data)
+            @putRemote(data, callback, errorCallback)
         else
             callback() if callback
 
     # Mark an item as deleted in local storage, and queue it to be deleted remotely
     markDelete: (keyOrItem) ->
-        this.log("deleting local data", keyOrItem)
-        this.state(keyOrItem, DELETED)
+        @log("deleting local data", keyOrItem)
+        @state(keyOrItem, DELETED)
 
     deleteLocal: (name) ->
-        localStorage.removeItem(this.urlFor(name))
+        localStorage.removeItem(@urlFor(name))
 
     deleteRemote: (name, callback) ->
         $.ajax {
-            type: 'DELETE', url: this.urlFor(name),
-            success: => this.log("remote data deleted", name); callback() if callback
+            type: 'DELETE', url: @urlFor(name),
+            success: => @log("remote data deleted", name); callback() if callback
         }
         
     delete: (keyOrItem, callback) ->
-        this.markDelete(keyOrItem)
+        @markDelete(keyOrItem)
     
     DEFAULT_CONFIG = { state: CLEAN, lastRemoteVersion: 0 }
     
@@ -122,43 +121,44 @@ class CachedRESTStorage
             localStorage[@url] = data
         return data[name]
         
-    version: (newVersion) -> this.configureOption('version', newVersion)
+    version: (newVersion) -> @configureOption('version', newVersion)
     
-    syncing: (flag) -> this.configureOption('syncing', flag)
+    syncing: (flag) -> @configureOption('syncing', flag)
          
+    unsyncedItem: (name) ->
+        switch @state(name)
+            when DIRTY then @getLocal(name)
+            when DELETED then name
+            else nil
+        
     unsyncedItems: ->
-        items = []
-        for name in this.allKeys()
-            if this.state(name) == DIRTY
-                items[items.length] = this.getLocal(name)
-            else if this.state(name) == DELETED
-                items[items.length] = name
-        return items
+        items = (@unsyncedItem(name) for name in @allKeys())
+        (item for item in items if item?)
         
     itemMetadata: (keyOrItem, metatag, value) ->
-        url = this.urlFor(keyOrItem)
+        url = @urlFor(keyOrItem)
         raw = localStorage[url]
-        return undefined if raw == undefined
+        return undefined unless raw?
         meta = JSON.parse(raw)
         if value != undefined
             meta[metatag] = value
             localStorage[url] = JSON.stringify(meta)
         meta[metatag]
 
-    state: (name, value) -> this.itemMetadata(name, "state", value)
+    state: (name, value) -> @itemMetadata(name, "state", value)
     
     synced: (name, value) -> 
-        state = this.state(name, value)
+        state = @state(name, value)
         state == CLEAN || state == undefined
         
     syncItem: (item, callback) ->
         if (typeof item) == "string"
-            this.deleteRemote item, =>
-                this.deleteLocal(item)
+            @deleteRemote item, =>
+                @deleteLocal(item)
                 callback()
         else
-            this.putRemote item, =>
-                this.state(item, CLEAN)
+            @putRemote item, =>
+                @state(item, CLEAN)
                 callback()
         
     # Remove the first item in items and send it to remote; processing the remaining list
@@ -167,28 +167,27 @@ class CachedRESTStorage
         if items.length == 0
             callback()
         else
-            item = items[0]
-            items = items.slice(1, items.length-1)
-            this.syncItem(item, => this.sendNextItem(items, callback))
+            item = items.shift()
+            @syncItem(item, => @sendNextItem(items, callback))
                         
     sendLocallyModifiedItems: (callback) ->
-        items = this.unsyncedItems()
-        this.sendNextItem(items, callback) 
+        items = @unsyncedItems()
+        @sendNextItem(items, callback) 
         
     # TODO: save last sent remote version and use it when resending
     sync: (callback) ->
-        this.log("syncing remote data...", "")
-        this.sendLocallyModifiedItems =>
-            this.log("getting remote changes", "")
-            $.ajax { type: 'GET', url: @url + "?since_version=0", dataType: "json", success: (items) =>
-                this.log("got " + items.length + " items", "")
+        @log("syncing remote data...", "")
+        @sendLocallyModifiedItems =>
+            @log("getting remote changes", "")
+            $.ajax { type: 'GET', url: "#{@url}?since_version=0", dataType: "json", success: (items) =>
+                @log("got #{items.length} items", "")
                 for item in items
-                    this.log("syncing " + JSON.stringify(item))
+                    @log("syncing " + JSON.stringify(item))
                     if item.deleted
-                        this.deleteLocal(item)
+                        @deleteLocal(item)
                     else
-                        this.putLocal(item, CLEAN)
-                this.log("synced.", "")
+                        @putLocal(item, CLEAN)
+                @log("synced.", "")
                 callback() if callback
             }
 
@@ -196,58 +195,63 @@ class CachedRESTStorage
     keysWithPrefix: (keyPrefix) ->
         keys = []
         return keys if localStorage.length == 0
-        urlPrefix = this.urlFor(keyPrefix)
-        for index in [0..localStorage.length-1]
+        urlPrefix = @urlFor(keyPrefix)
+        for index in [0...localStorage.length]
             url = localStorage.key(index)
-            keys[keys.length] = this.keyForUrl(url) if url.substr(0, urlPrefix.length) == urlPrefix
+            keys[keys.length] = @keyForUrl(url) if url.substr(0, urlPrefix.length) == urlPrefix
         return keys
     
     searchLocal: (condition) ->
         if typeof condition == 'string'
             prefix = condition
             condition = (item) -> item.name.substr(0, prefix.length) == prefix
-        (item for item in this.allItems() when condition(item))
+        (item for item in @allItems() when condition(item))
         
     search: (condition, callback) ->
-        items = this.searchLocal(condition)
+        items = @searchLocal(condition)
         callback(items) if callback
         items
         
     attributesFromItem: (item) -> if item && item.toAttributes then item.toAttributes() else item
     
     itemFromAttributes: (attributes) ->
-        return attributes unless this.klass && attributes
-        return attributes if (typeof(this.klass) == "function") && attributes instanceof this.klass
-        if this.klass.itemFromAttributes
-            this.klass.itemFromAttributes(attributes)
+        return attributes unless @klass && attributes
+        return attributes if (typeof(@klass) == "function") && attributes instanceof @klass
+        if @klass.itemFromAttributes
+            @klass.itemFromAttributes(attributes)
         else
-            new this.klass(attributes)
+            new @klass(attributes)
     
-    allKeys: -> this.keysWithPrefix("").sort()
+    allKeys: -> @keysWithPrefix("").sort()
     
-    allItems: (callback) -> 
+    allItems2: (callback) -> 
         articles = []
-        for key in this.allKeys()
-            item = this.getLocal(key)
+        for key in @allKeys()
+            item = @getLocal(key)
             articles.push(item) if item
+        callback(articles) if callback
+        articles
+
+    allItems: (callback) -> 
+        articles = (@getLocal(key) for key in @allKeys() when key?)
         callback(articles) if callback
         articles
 
     # Remove all local data for this store
     reset: -> 
-        (this.deleteLocal(key) for key in this.allKeys())
-        this.version(0)
+        (@deleteLocal(key) for key in @allKeys())
+        @version(0)
     
-    size: -> this.allKeys().length
+    size: -> @allKeys().length
         
-    urlFor: (keyOrItem) ->  this.url + "/" + this.keyFor(keyOrItem)
+    urlFor: (keyOrItem) -> "#{@url}/#{@keyFor(keyOrItem)}"
     
-    keyFor: (keyOrItem) -> if (typeof keyOrItem) == "object" then keyOrItem[this.keyField] else keyOrItem
+    keyFor: (keyOrItem) -> if (typeof keyOrItem) == "object" then keyOrItem[@keyField] else keyOrItem
 
-    keyForUrl: (url) -> url.substr(this.url.length + 1)
+    keyForUrl: (url) -> url.substr(@url.length + 1)
 
     log: (message, keyOrItem) ->
-        console.info(message + ": " + this.keyFor(keyOrItem))
+        console.info("#{message}:#{@keyFor(keyOrItem)}")
 
 CachedRESTStorage.isAvailable = ->
     try

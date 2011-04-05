@@ -1,14 +1,14 @@
 class DiceFactory
     
     constructor: ->
-        this.diceClasses = []
+        @diceClasses = []
         
     register: (diceClass) ->
-        this.diceClasses.push(diceClass)
+        @diceClasses.push(diceClass)
 
     createDie: (spec) ->
         dice = undefined
-        for diceClass in this.diceClasses
+        for diceClass in @diceClasses
             dice = diceClass.fromString(spec)
             return dice if dice
     
@@ -20,24 +20,34 @@ class DiceFactory
         else
             number = 1
         
-        dice = (this.createDie(spec) for i in [1..number])
+        dice = (@createDie(spec) for i in [1..number])
         
-    create: (spec) ->
+    create2: (spec) ->
         if /max\((.*)\)/.test(spec)
-            specs = spec[4..-2].split(',')
+            specs = spec.slice(4, -2).split(',')
             dice = []
             for spec in specs
-                dice.push(this.createDie(spec)) unless spec == ""
+                dice.push(@createDie(spec)) unless spec == ""
             return new window.DiceRoller.DicePickHighest(1, dice)
         else
             specs = spec.replace(/-/, "+-").split('+')
             dice = []
             for spec in specs
-                dice.push(this.createDie(spec)) unless spec == ""
+                dice.push(@createDie(spec)) unless spec == ""
+            return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)
+
+    create: (spec) ->
+        if /max\((.*)\)/.test(spec)
+            specs = spec.slice(4, -1).split(',')
+            dice = (@createDie(spec) for spec in specs when spec != "")
+            return new window.DiceRoller.DicePickHighest(1, dice)
+        else
+            specs = spec.replace(/-/, "+-").split('+')
+            dice = (@createDie(spec) for spec in specs when spec != "")
             return if dice.length == 1 then dice[0] else new window.DiceRoller.DiceSum(dice)
 
     createCombo: (spec) ->
-        diceCombo = this.create(spec)
+        diceCombo = @create(spec)
         if diceCombo instanceof window.DiceRoller.Die
             diceCombo = new window.DiceRoller.DiceSum([diceCombo])
         diceCombo
@@ -45,11 +55,11 @@ class DiceFactory
 window.DiceRoller.diceFactory = new DiceFactory()
 
 window.DiceRoller.diceFactory.itemFromAttributes = (attr) ->
-    diceCombo = this.createCombo(attr.typeId)
+    diceCombo = @createCombo(attr.typeId)
     diceCombo.computeResult()
     diceCombo.key = attr.key
     diceCombo.title = attr.title
     unless diceCombo.dice.length == 0
-        for i in [0..diceCombo.dice.length-1]
+        for i in [0...diceCombo.dice.length]
             diceCombo.dice[i].currentRoll = attr.rolls[i]
     diceCombo
