@@ -6,7 +6,7 @@
 #rollPage .savedDice .dice .dieView { float: left; }
 #rollPage .dieView .dieType { display: none; }
 
-#rollPage .rollResult { position: absolute; right: 0; font-size: 250%; padding:0.1em; color: #ff5; }
+#rollPage .rollResult { text-align: center; width: 100%; font-size: 250%; padding:0.1em; color: #ff5; }
 
 #rollPage .savedButtons { position: absolute; right: 0; bottom: 0; }
 

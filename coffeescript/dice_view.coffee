@@ -19,7 +19,7 @@ class DieView
     
      element: -> document.getElementById(@id)
      
-     updateRoll: (newRoll) -> $(@id + ' .roll').text(String(newRoll))
+     updateRoll: (newRoll) -> $("##{@id} .roll").text(String(newRoll))
      
      # disconnect from DOM
      unlinkFromDOM: -> @element().controller = null
@@ -57,8 +57,8 @@ class DiceView
         true
     
     # updateRolls updates the views with the new roll values
-    
     updateRolls: (newDiceSet) ->
+        @dice = newDiceSet.dice
         for i in [0...@dice.length]
             @diceViews[i].updateRoll(@dice[i].currentRoll)
     

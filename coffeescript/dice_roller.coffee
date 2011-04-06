@@ -104,7 +104,7 @@ class DiceRoller extends PageController
         else
             $(@pageSelector + ' .btn-delete').hide()
         
-        if @diceView
+        if @diceView && @diceView.diceSet.typeId == @dice.typeId
             @diceView.updateWith(@dice)
         else
             @diceView = new DiceView(jQuery('#rollPage .rollArea .dice'), @dice)
@@ -193,11 +193,13 @@ class DiceRoller extends PageController
     setupNewDiceSavedDiceSet: ->
         diceSet = window.DiceRoller.diceFactory.createCombo('d6')
         diceSet.title = '*New*'
-        diceSelectionArea.append(tmpl('diceSetViewTemplate', diceSet))
+        diceSet.key = ""
+        jQuery('#rollPage .savedDice').append(tmpl('diceSetViewTemplate', diceSet))
 
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#rollPage .savedDice')
         diceSelectionArea.empty()
+        @setupNewDiceSavedDiceSet()
         @storage.allItems (diceSets) ->
             for diceSet in diceSets
                 diceSet.title = diceSet.typeId unless diceSet.title
