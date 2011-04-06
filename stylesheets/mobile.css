@@ -4,6 +4,7 @@
 #rollPage .selectionArea { width: 100%; height: 35%; position: relative; overflow: hidden; border-top: solid 2px black; }
 #rollPage .savedDice .dice { float: left; }
 #rollPage .savedDice .dice .dieView { float: left; }
+#rollPage .dieView .dieType { display: none; }
 
 #rollPage .rollResult { position: absolute; right: 0; font-size: 250%; padding:0.1em; color: #ff5; }
 
@@ -12,10 +13,11 @@
 /* build page */
 #buildPage .rollArea { width: 100%; height: 40%; position:relative;  overflow: hidden; }
 #buildPage .removeHelp { width: 100%; text-align: center; }
-#buildPage .selectionArea { width: 100%; height: 60%; position: relative; overflow: hidden; }
+#buildPage .selectionArea { width: 100%; height: 60%; position: relative; overflow: hidden; border-top: solid 2px black; }
 #buildPage .addHelp { width: 100%; text-align: center; }
 
 #buildPage .dieSelector .dieView { float: left; width: 80px; height: 80px; }
+#buildPage .dieView .roll { display: none; }
 
 /* odds pane */
 /*#probabilityChart { width: 100%; height: 100%; background-color: #456;}
@@ -29,4 +31,8 @@
 
 .dieView { position: relative; overflow: hidden; }
 .dieView img { position: absolute; width: 100%; height: 100%; }
-.dieView .roll { position: absolute; font-size: 1.7em; color: black; text-align: center; width: 100%; height: 100%; }
+.dieView .roll, .dieView .dieType { 
+    position: absolute; text-align: center; width: 100%; height: 100%;
+    font-size: 1.7em; color: black; 
+    margin-top: 20px;
+}
