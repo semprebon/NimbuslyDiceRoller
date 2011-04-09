@@ -46,7 +46,15 @@
 
   <!-- dice_set_view_template is used to display selectable dice sets -->
   <script type="text/html" id="diceSetViewTemplate">
-    <button class="diceSetPick" spec="<%= typeId %>" id="select-<%=key%>"><%= title %></button>
+    <div data-theme="c" class="ui-btn ui-btn-inline ui-btn-corner-all ui-shadow ui-btn-down-c ui-btn-up-c">
+      <span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text"><%= title %></span></span>
+      <button spec="<%= typeId %>" id="select-<%=key%>"
+          class="diceSetPick ui-btn-hidden ui-btn ui-btn-inline ui-btn-corner-all 
+            ui-shadow ui-btn-down-a ui-btn-up-a" data-inline="true" data-role="button" spec="d6" data-theme="a">
+          <span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text"><%= title %></span></span>
+       </button>
+    </div>
+    <!-- button class="diceSetPick"  data-inline="true" data-role="button" spec="<%= typeId %>" id="select-<%=key%>"><%= title %></button-->
   </script>
 
   <!-- dice_view_template is used to display a single die in the main roll area -->
@@ -79,8 +87,8 @@
           <a href="#" data-role="button" data-inline="true" class="btn-delete">Delete</a>
         </div>
       </div>
-      <div class="selectionArea savedDice">
-        ?
+      <div class="selectionArea savedDice" data-inline="true">
+        <button class="newDiceSet" data-inline="true" data-role="button" spec="d6">New</button>
       </div>
     
     </div> 

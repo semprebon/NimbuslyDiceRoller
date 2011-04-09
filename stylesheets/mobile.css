@@ -1,5 +1,7 @@
 /* roll page */
-#rollPage .rollArea .dice { width: 100%; height: 35%; position:relative;  overflow: hidden; }
+#rollPage .rollArea { width: 100%; height: 35%; position:relative;  overflow: hidden; }
+#rollPage .rollArea .dice { width: 100%; height: 100%; position:relative;  overflow: hidden; }
+#rollPage .rollArea .savedButtons { position:absolute; bottom: 0; right: 0; overflow: hidden; }
 
 #rollPage .selectionArea { width: 100%; height: 35%; position: relative; overflow: hidden; border-top: solid 2px black; }
 #rollPage .savedDice .dice { float: left; }

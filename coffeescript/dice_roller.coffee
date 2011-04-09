@@ -199,7 +199,9 @@ class DiceRoller extends PageController
     setUpSavedDice: ->
         diceSelectionArea = jQuery('#rollPage .savedDice')
         diceSelectionArea.empty()
-        @setupNewDiceSavedDiceSet()
+        jQuery('#rollPage .savedDice .newDiceSet').click (event) =>
+            @setDiceSet(window.DiceRoller.diceFactory.createCombo('d6')) 
+            
         @storage.allItems (diceSets) ->
             for diceSet in diceSets
                 diceSet.title = diceSet.typeId unless diceSet.title
