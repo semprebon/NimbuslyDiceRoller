@@ -1,0 +1,25 @@
+h1. Nimbusly Dice Roller
+
+Nimbusly Dice Roller is a dice rolling application implemented in Coffeescript.
+
+I wrote this as a demonstration project in order to learn CoffeeScript. It is loosely based on my java project, 
+DroidDice:https://play.google.com/store/apps/details?id=com.droiddice&hl=en. It also includes code for computing dice
+probabilities for various ways of reading the dice (i.e., dice pools, sum, etc).
+
+h2. License
+
+Nimbusly Dice Roller Copywrite 2010-2011 Andrew Semprebon
+
+Nimbusly Dice Roller is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Nimbusly Dice Roller is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Nimbusly Dice Roller.  If not, see <http://www.gnu.org/licenses/>.
+
